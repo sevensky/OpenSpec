@@ -66,12 +66,12 @@ export class ValidateCommand {
   private async runInteractiveSelector(opts: { strict: boolean; json: boolean; concurrency?: string }): Promise<void> {
     const { select } = await import('@inquirer/prompts');
     const choice = await select({
-      message: 'What would you like to validate?',
+      message: '你想验证什么？',
       choices: [
-        { name: 'All (changes + specs)', value: 'all' },
-        { name: 'All changes', value: 'changes' },
-        { name: 'All specs', value: 'specs' },
-        { name: 'Pick a specific change or spec', value: 'one' },
+        { name: '全部（变更 + 规格）', value: 'all' },
+        { name: '所有变更', value: 'changes' },
+        { name: '所有规格', value: 'specs' },
+        { name: '选择特定的变更或规格', value: 'one' },
       ],
     });
 
@@ -85,21 +85,21 @@ export class ValidateCommand {
     items.push(...changes.map(id => ({ name: `change/${id}`, value: { type: 'change' as const, id } })));
     items.push(...specs.map(id => ({ name: `spec/${id}`, value: { type: 'spec' as const, id } })));
     if (items.length === 0) {
-      console.error('No items found to validate.');
+      console.error('未找到要验证的项目。');
       process.exitCode = 1;
       return;
     }
-    const picked = await select<{ type: ItemType; id: string }>({ message: 'Pick an item', choices: items });
+    const picked = await select<{ type: ItemType; id: string }>({ message: '选择一个项目', choices: items });
     await this.validateByType(picked.type, picked.id, opts);
   }
 
   private printNonInteractiveHint(): void {
-    console.error('Nothing to validate. Try one of:');
+    console.error('没有可验证的内容。试试以下命令之一：');
     console.error('  openspec validate --all');
     console.error('  openspec validate --changes');
     console.error('  openspec validate --specs');
-    console.error('  openspec validate <item-name>');
-    console.error('Or run in an interactive terminal.');
+    console.error('  openspec validate <项目名称>');
+    console.error('或者在交互式终端中运行。');
   }
 
   private async validateDirectItem(itemName: string, opts: { typeOverride?: ItemType; strict: boolean; json: boolean }): Promise<void> {
@@ -110,16 +110,16 @@ export class ValidateCommand {
     const type = opts.typeOverride ?? (isChange ? 'change' : isSpec ? 'spec' : undefined);
 
     if (!type) {
-      console.error(`Unknown item '${itemName}'`);
+      console.error(`未知项目 '${itemName}'`);
       const suggestions = nearestMatches(itemName, [...changes, ...specs]);
-      if (suggestions.length) console.error(`Did you mean: ${suggestions.join(', ')}?`);
+      if (suggestions.length) console.error(`你是否想找: ${suggestions.join(', ')}?`);
       process.exitCode = 1;
       return;
     }
 
     if (!opts.typeOverride && isChange && isSpec) {
-      console.error(`Ambiguous item '${itemName}' matches both a change and a spec.`);
-      console.error('Pass --type change|spec, or use: openspec change validate / openspec spec validate');
+      console.error(`项目 '${itemName}' 同时匹配了变更和规格，存在歧义。`);
+      console.error('请传递 --type change|spec，或使用: openspec change validate / openspec spec validate');
       process.exitCode = 1;
       return;
     }
@@ -154,9 +154,9 @@ export class ValidateCommand {
       return;
     }
     if (report.valid) {
-      console.log(`${type === 'change' ? 'Change' : 'Specification'} '${id}' is valid`);
+      console.log(`${type === 'change' ? '变更' : '规格'} '${id}' 验证通过`);
     } else {
-      console.error(`${type === 'change' ? 'Change' : 'Specification'} '${id}' has issues`);
+      console.error(`${type === 'change' ? '变更' : '规格'} '${id}' 存在问题`);
       for (const issue of report.issues) {
         const label = issue.level === 'ERROR' ? 'ERROR' : issue.level;
         const prefix = issue.level === 'ERROR' ? '✗' : issue.level === 'WARNING' ? '⚠' : 'ℹ';
@@ -169,20 +169,20 @@ export class ValidateCommand {
   private printNextSteps(type: ItemType): void {
     const bullets: string[] = [];
     if (type === 'change') {
-      bullets.push('- Ensure change has deltas in specs/: use headers ## ADDED/MODIFIED/REMOVED/RENAMED Requirements');
-      bullets.push('- Each requirement MUST include at least one #### Scenario: block');
-      bullets.push('- Debug parsed deltas: openspec change show <id> --json --deltas-only');
+      bullets.push('- 确保变更在 specs/ 中有 delta: 使用 ## ADDED/MODIFIED/REMOVED/RENAMED Requirements 标题');
+      bullets.push('- 每个需求必须至少包含一个 #### Scenario: 块');
+      bullets.push('- 调试已解析的 delta: openspec change show <id> --json --deltas-only');
     } else {
-      bullets.push('- Ensure spec includes ## Purpose and ## Requirements sections');
-      bullets.push('- Each requirement MUST include at least one #### Scenario: block');
-      bullets.push('- Re-run with --json to see structured report');
+      bullets.push('- 确保规格包含 ## Purpose 和 ## Requirements 段落');
+      bullets.push('- 每个需求必须至少包含一个 #### Scenario: 块');
+      bullets.push('- 使用 --json 重新运行以查看结构化报告');
     }
-    console.error('Next steps:');
+    console.error('后续步骤:');
     bullets.forEach(b => console.error(`  ${b}`));
   }
 
   private async runBulkValidation(scope: { changes: boolean; specs: boolean }, opts: { strict: boolean; json: boolean; concurrency?: string; noInteractive?: boolean }): Promise<void> {
-    const spinner = !opts.json && !opts.noInteractive ? ora('Validating...').start() : undefined;
+    const spinner = !opts.json && !opts.noInteractive ? ora('正在验证...').start() : undefined;
     const [changeIds, specIds] = await Promise.all([
       scope.changes ? getActiveChangeIds() : Promise.resolve<string[]>([]),
       scope.specs ? getSpecIds() : Promise.resolve<string[]>([]),
@@ -228,7 +228,7 @@ export class ValidateCommand {
         const out = { items: [] as BulkItemResult[], summary, version: '1.0' };
         console.log(JSON.stringify(out, null, 2));
       } else {
-        console.log('No items found to validate.');
+        console.log('未找到要验证的项目。');
       }
 
       process.exitCode = 0;
@@ -247,7 +247,7 @@ export class ValidateCommand {
           const currentIndex = index++;
           const task = queue[currentIndex];
           running++;
-          if (spinner) spinner.text = `Validating (${currentIndex + 1}/${queue.length})...`;
+          if (spinner) spinner.text = `正在验证 (${currentIndex + 1}/${queue.length})...`;
           task()
             .then(res => {
               results.push(res);
@@ -288,7 +288,7 @@ export class ValidateCommand {
         if (res.valid) console.log(`✓ ${res.type}/${res.id}`);
         else console.error(`✗ ${res.type}/${res.id}`);
       }
-      console.log(`Totals: ${summary.totals.passed} passed, ${summary.totals.failed} failed (${summary.totals.items} items)`);
+      console.log(`总计: ${summary.totals.passed} 通过, ${summary.totals.failed} 失败 (共 ${summary.totals.items} 项)`);
     }
 
     process.exitCode = failed > 0 ? 1 : 0;

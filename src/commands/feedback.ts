@@ -110,12 +110,12 @@ function generateManualSubmissionUrl(title: string, body: string): string {
  * Display formatted feedback content for manual submission
  */
 function displayFormattedFeedback(title: string, body: string): void {
-  console.log('\n--- FORMATTED FEEDBACK ---');
-  console.log(`Title: ${title}`);
-  console.log(`Labels: feedback`);
-  console.log('\nBody:');
+  console.log('\n--- 格式化反馈 ---');
+  console.log(`标题：${title}`);
+  console.log(`标签：feedback`);
+  console.log('\n内容：');
   console.log(body);
-  console.log('--- END FEEDBACK ---\n');
+  console.log('--- 反馈结束 ---\n');
 }
 
 /**
@@ -142,8 +142,8 @@ function submitViaGhCli(title: string, body: string): void {
     );
 
     const issueUrl = result.trim();
-    console.log(`\n✓ Feedback submitted successfully!`);
-    console.log(`Issue URL: ${issueUrl}\n`);
+    console.log(`\n✓ 反馈提交成功！`);
+    console.log(`问题链接：${issueUrl}\n`);
   } catch (error: any) {
     // Display the error output from gh CLI
     if (error.stderr) {
@@ -162,15 +162,15 @@ function submitViaGhCli(title: string, body: string): void {
  */
 function handleFallback(title: string, body: string, reason: 'missing' | 'unauthenticated'): void {
   if (reason === 'missing') {
-    console.log('⚠️  GitHub CLI not found. Manual submission required.');
+    console.log('⚠️  未找到 GitHub CLI。需要手动提交。');
   } else {
-    console.log('⚠️  GitHub authentication required. Manual submission required.');
+    console.log('⚠️  需要 GitHub 认证。需要手动提交。');
   }
 
   displayFormattedFeedback(title, body);
 
   const manualUrl = generateManualSubmissionUrl(title, body);
-  console.log('Please submit your feedback manually:');
+  console.log('请手动提交你的反馈：');
   console.log(manualUrl);
 
   if (reason === 'unauthenticated') {

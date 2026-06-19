@@ -164,8 +164,8 @@ export class Validator {
           const requirementText = this.extractRequirementText(block.raw);
           if (!requirementText) {
             issues.push({ level: 'ERROR', path: entryPath, message: `ADDED "${block.name}" is missing requirement text` });
-          } else if (!this.containsShallOrMust(requirementText)) {
-            issues.push({ level: 'ERROR', path: entryPath, message: this.buildMissingShallOrMustMessage('ADDED', block.name) });
+          } else if (!this.containsNormativeKeyword(requirementText)) {
+            issues.push({ level: 'ERROR', path: entryPath, message: this.buildMissingNormativeKeywordMessage('ADDED', block.name) });
           }
           const scenarioCount = this.countScenarios(block.raw);
           if (scenarioCount < 1) {
@@ -185,8 +185,8 @@ export class Validator {
           const requirementText = this.extractRequirementText(block.raw);
           if (!requirementText) {
             issues.push({ level: 'ERROR', path: entryPath, message: `MODIFIED "${block.name}" is missing requirement text` });
-          } else if (!this.containsShallOrMust(requirementText)) {
-            issues.push({ level: 'ERROR', path: entryPath, message: this.buildMissingShallOrMustMessage('MODIFIED', block.name) });
+          } else if (!this.containsNormativeKeyword(requirementText)) {
+            issues.push({ level: 'ERROR', path: entryPath, message: this.buildMissingNormativeKeywordMessage('MODIFIED', block.name) });
           }
           const scenarioCount = this.countScenarios(block.raw);
           if (scenarioCount < 1) {
@@ -440,24 +440,24 @@ export class Validator {
     return undefined;
   }
 
-  private containsShallOrMust(text: string): boolean {
-    return /\b(SHALL|MUST)\b/.test(text);
+  private containsNormativeKeyword(text: string): boolean {
+    // 支持英文 SHALL/MUST 和中文 必须/应当
+    return /\b(SHALL|MUST)\b/.test(text) || /(必须|应当)/.test(text);
   }
 
   /**
-   * Build an error message for a requirement block whose body lacks SHALL/MUST.
+   * 为缺少规范性关键词的需求块构建错误消息。
    *
-   * When the SHALL/MUST keyword already appears in the requirement header (e.g.
-   * `### Requirement: The system SHALL ...`) the original generic error
-   * ("must contain SHALL or MUST") is confusing because the keyword is visibly
-   * present in the spec. Per the OpenSpec conventions the keyword has to live
-   * on the requirement body line (the line right after the header), so we point
-   * the author at that exact fix when the keyword is found in the header only.
+   * 当 SHALL/MUST/必须/应当 已出现在需求标题中时（例如
+   * `### Requirement: The system SHALL ...`），原通用错误
+   * 会令人困惑，因为关键词在规格中可见。按 OpenSpec 约定，
+   * 关键词必须写在需求正文行（紧接标题之后的那行），
+   * 因此当关键词仅在标题中出现时，我们指引作者进行精确修复。
    */
-  private buildMissingShallOrMustMessage(action: 'ADDED' | 'MODIFIED', blockName: string): string {
-    const base = `${action} "${blockName}" must contain SHALL or MUST`;
-    if (this.containsShallOrMust(blockName)) {
-      return `${base} in the requirement body, not only in the header. Move the SHALL/MUST statement to the line immediately after the "### Requirement: ..." header.`;
+  private buildMissingNormativeKeywordMessage(action: 'ADDED' | 'MODIFIED', blockName: string): string {
+    const base = `${action} "${blockName}" 必须包含 SHALL、MUST、必须 或 应当`;
+    if (this.containsNormativeKeyword(blockName)) {
+      return `${base}，且关键词需放在需求正文中，而非仅出现在标题中。请将 SHALL/MUST/必须/应当 声明移至紧接 "### Requirement: ..." 标题之后的正文行。`;
     }
     return base;
   }

@@ -86,12 +86,12 @@ export async function templatesCommand(options: TemplatesOptions): Promise<void>
       return;
     }
 
-    console.log(`Schema: ${schemaName}`);
-    console.log(`Source: ${source}`);
+    console.log(`架构：${schemaName}`);
+    console.log(`来源：${source}`);
     console.log();
 
     for (const t of templates) {
-      console.log(`${t.artifactId}:`);
+      console.log(`${t.artifactId}：`);
       console.log(`  ${t.templatePath}`);
     }
   } catch (error) {

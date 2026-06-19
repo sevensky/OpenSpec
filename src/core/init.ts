@@ -219,13 +219,13 @@ export class InitCommand {
     // Interactive mode: prompt for confirmation
     const { confirm } = await import('@inquirer/prompts');
     const shouldCleanup = await confirm({
-      message: 'Upgrade and clean up legacy files?',
+      message: '升级并清理旧版文件？',
       default: true,
     });
 
     if (!shouldCleanup) {
-      console.log(chalk.dim('Initialization cancelled.'));
-      console.log(chalk.dim('Run with --force to skip this prompt, or manually remove legacy files.'));
+      console.log(chalk.dim('初始化已取消。'));
+      console.log(chalk.dim('使用 --force 跳过此提示，或手动删除旧版文件。'));
       process.exit(0);
     }
 
@@ -233,11 +233,11 @@ export class InitCommand {
   }
 
   private async performLegacyCleanup(projectPath: string, detection: LegacyDetectionResult): Promise<void> {
-    const spinner = ora('Cleaning up legacy files...').start();
+    const spinner = ora('正在清理旧版文件...').start();
 
     const result = await cleanupLegacyArtifacts(projectPath, detection);
 
-    spinner.succeed('Legacy files cleaned up');
+    spinner.succeed('旧版文件已清理');
 
     const summary = formatCleanupSummary(result);
     if (summary) {
@@ -323,7 +323,7 @@ export class InitCommand {
       .map((toolId) => AI_TOOLS.find((t) => t.value === toolId)?.name || toolId);
 
     if (configuredNames.length > 0) {
-      console.log(`OpenSpec configured: ${configuredNames.join(', ')} (pre-selected)`);
+      console.log(`已配置 OpenSpec：${configuredNames.join(', ')}（预选）`);
     }
 
     const detectedOnlyNames = detectedTools
@@ -332,16 +332,16 @@ export class InitCommand {
 
     if (detectedOnlyNames.length > 0) {
       const detectionLabel = shouldPreselectDetected
-        ? 'pre-selected for first-time setup'
-        : 'not pre-selected';
-      console.log(`Detected tool directories: ${detectedOnlyNames.join(', ')} (${detectionLabel})`);
+        ? '为首次设置预选'
+        : '未预选';
+      console.log(`检测到的工具目录：${detectedOnlyNames.join(', ')}（${detectionLabel}）`);
     }
 
     const selectedTools = await searchableMultiSelect({
-      message: `Select tools to set up (${validTools.length} available)`,
+      message: `选择要设置的工具（${validTools.length} 个可用）`,
       pageSize: 15,
       choices: sortedChoices,
-      validate: (selected: string[]) => selected.length > 0 || 'Select at least one tool',
+      validate: (selected: string[]) => selected.length > 0 || '请至少选择一个工具',
     });
 
     if (selectedTools.length === 0) {
@@ -637,15 +637,15 @@ export class InitCommand {
     configStatus: 'created' | 'exists' | 'skipped'
   ): void {
     console.log();
-    console.log(chalk.bold('OpenSpec Setup Complete'));
+    console.log(chalk.bold('OpenSpec 设置完成'));
     console.log();
 
     // Show created vs refreshed tools
     if (results.createdTools.length > 0) {
-      console.log(`Created: ${results.createdTools.map((t) => t.name).join(', ')}`);
+      console.log(`已创建：${results.createdTools.map((t) => t.name).join(', ')}`);
     }
     if (results.refreshedTools.length > 0) {
-      console.log(`Refreshed: ${results.refreshedTools.map((t) => t.name).join(', ')}`);
+      console.log(`已刷新：${results.refreshedTools.map((t) => t.name).join(', ')}`);
     }
 
     // Show counts (respecting profile filter)
@@ -659,41 +659,41 @@ export class InitCommand {
       const skillCount = delivery !== 'commands' ? getSkillTemplates(workflows).length : 0;
       const commandCount = delivery !== 'skills' ? getCommandContents(workflows).length : 0;
       if (skillCount > 0 && commandCount > 0) {
-        console.log(`${skillCount} skills and ${commandCount} commands in ${toolDirs}/`);
+        console.log(`${skillCount} 项技能和 ${commandCount} 项命令，位于 ${toolDirs}/`);
       } else if (skillCount > 0) {
-        console.log(`${skillCount} skills in ${toolDirs}/`);
+        console.log(`${skillCount} 项技能，位于 ${toolDirs}/`);
       } else if (commandCount > 0) {
-        console.log(`${commandCount} commands in ${toolDirs}/`);
+        console.log(`${commandCount} 项命令，位于 ${toolDirs}/`);
       }
     }
 
     // Show failures
     if (results.failedTools.length > 0) {
-      console.log(chalk.red(`Failed: ${results.failedTools.map((f) => `${f.name} (${f.error.message})`).join(', ')}`));
+      console.log(chalk.red(`失败：${results.failedTools.map((f) => `${f.name} (${f.error.message})`).join(', ')}`));
     }
 
     // Show skipped commands
     if (results.commandsSkipped.length > 0) {
-      console.log(chalk.dim(`Commands skipped for: ${results.commandsSkipped.join(', ')} (no adapter)`));
+      console.log(chalk.dim(`已跳过命令：${results.commandsSkipped.join(', ')}（无适配器）`));
     }
     if (results.removedCommandCount > 0) {
-      console.log(chalk.dim(`Removed: ${results.removedCommandCount} command files (delivery: skills)`));
+      console.log(chalk.dim(`已移除：${results.removedCommandCount} 个命令文件（交付方式：skills）`));
     }
     if (results.removedSkillCount > 0) {
-      console.log(chalk.dim(`Removed: ${results.removedSkillCount} skill directories (delivery: commands)`));
+      console.log(chalk.dim(`已移除：${results.removedSkillCount} 个技能目录（交付方式：commands）`));
     }
 
     // Config status
     if (configStatus === 'created') {
-      console.log(`Config: openspec/config.yaml (schema: ${DEFAULT_SCHEMA})`);
+      console.log(`配置：openspec/config.yaml（架构：${DEFAULT_SCHEMA}）`);
     } else if (configStatus === 'exists') {
       // Show actual filename (config.yaml or config.yml)
       const configYaml = path.join(projectPath, OPENSPEC_DIR_NAME, 'config.yaml');
       const configYml = path.join(projectPath, OPENSPEC_DIR_NAME, 'config.yml');
       const configName = fs.existsSync(configYaml) ? 'config.yaml' : fs.existsSync(configYml) ? 'config.yml' : 'config.yaml';
-      console.log(`Config: openspec/${configName} (exists)`);
+      console.log(`配置：openspec/${configName}（已存在）`);
     } else {
-      console.log(chalk.dim(`Config: skipped (non-interactive mode)`));
+      console.log(chalk.dim(`配置：已跳过（非交互模式）`));
     }
 
     // Getting started (task 7.6: show propose if in profile)
@@ -702,24 +702,24 @@ export class InitCommand {
     const activeWorkflows = [...getProfileWorkflows(activeProfile, globalCfg.workflows)];
     console.log();
     if (activeWorkflows.includes('propose')) {
-      console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /opsx:propose "your idea"');
+      console.log(chalk.bold('快速上手：'));
+      console.log('  开始你的第一个变更: /opsx:propose "你的想法"');
     } else if (activeWorkflows.includes('new')) {
-      console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /opsx:new "your idea"');
+      console.log(chalk.bold('快速上手：'));
+      console.log('  开始你的第一个变更: /opsx:new "你的想法"');
     } else {
-      console.log("Done. Run 'openspec config profile' to configure your workflows.");
+      console.log("完成。运行 'openspec config profile' 配置你的工作流。");
     }
 
     // Links
     console.log();
-    console.log(`Learn more: ${chalk.cyan('https://github.com/Fission-AI/OpenSpec')}`);
-    console.log(`Feedback:   ${chalk.cyan('https://github.com/Fission-AI/OpenSpec/issues')}`);
+    console.log(`了解更多: ${chalk.cyan('https://github.com/Fission-AI/OpenSpec')}`);
+    console.log(`反馈:   ${chalk.cyan('https://github.com/Fission-AI/OpenSpec/issues')}`);
 
     // Restart instruction if any tools were configured
     if (results.createdTools.length > 0 || results.refreshedTools.length > 0) {
       console.log();
-      console.log(chalk.white('Restart your IDE for slash commands to take effect.'));
+      console.log(chalk.white('重启你的 IDE 以使斜杠命令生效。'));
     }
 
     console.log();

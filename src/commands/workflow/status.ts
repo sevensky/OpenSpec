@@ -35,7 +35,7 @@ export interface StatusOptions {
 // -----------------------------------------------------------------------------
 
 export async function statusCommand(options: StatusOptions): Promise<void> {
-  const spinner = options.json ? undefined : ora('Loading change status...').start();
+  const spinner = options.json ? undefined : ora('正在加载变更状态...').start();
 
   try {
     const planningHome = resolveCurrentPlanningHomeSync();
@@ -48,16 +48,16 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
       if (available.length === 0) {
         spinner?.stop();
         if (options.json) {
-          console.log(JSON.stringify({ changes: [], message: 'No active changes.' }, null, 2));
+          console.log(JSON.stringify({ changes: [], message: '没有活跃的变更。' }, null, 2));
           return;
         }
-        console.log('No active changes. Create one with: openspec new change <name>');
+        console.log('没有活跃的变更。使用 openspec new change <name> 创建一个。');
         return;
       }
       // Changes exist but --change not provided
       spinner?.stop();
       throw new Error(
-        `Missing required option --change. Available changes:\n  ${available.join('\n  ')}`
+        `缺少必需选项 --change。可用变更：\n  ${available.join('\n  ')}`
       );
     }
 
@@ -97,19 +97,19 @@ export function printStatusText(status: ChangeStatus): void {
   const doneCount = status.artifacts.filter((a) => a.status === 'done').length;
   const total = status.artifacts.length;
 
-  console.log(`Change: ${status.changeName}`);
-  console.log(`Schema: ${status.schemaName}`);
+  console.log(`变更：${status.changeName}`);
+  console.log(`架构：${status.schemaName}`);
   if (status.initiative) {
-    console.log(`Initiative: ${status.initiative.store}/${status.initiative.id}`);
+    console.log(`计划：${status.initiative.store}/${status.initiative.id}`);
   }
   if (status.planningHome) {
     const label = status.planningHome.kind === 'workspace'
-      ? `workspace${status.planningHome.workspaceName ? ` (${status.planningHome.workspaceName})` : ''}`
-      : 'repo';
-    console.log(`Planning home: ${label}`);
-    console.log(`Change root: ${status.changeRoot}`);
+      ? `工作区${status.planningHome.workspaceName ? `（${status.planningHome.workspaceName}）` : ''}`
+      : '仓库';
+    console.log(`规划位置：${label}`);
+    console.log(`变更根目录：${status.changeRoot}`);
   }
-  console.log(`Progress: ${doneCount}/${total} artifacts complete`);
+  console.log(`进度：${doneCount}/${total} 个制品已完成`);
   console.log();
 
   for (const artifact of status.artifacts) {
@@ -118,7 +118,7 @@ export function printStatusText(status: ChangeStatus): void {
     let line = `${indicator} ${artifact.id}`;
 
     if (artifact.status === 'blocked' && artifact.missingDeps && artifact.missingDeps.length > 0) {
-      line += color(` (blocked by: ${artifact.missingDeps.join(', ')})`);
+      line += color(`（被阻塞：${artifact.missingDeps.join(', ')}）`);
     }
 
     console.log(line);
@@ -126,6 +126,6 @@ export function printStatusText(status: ChangeStatus): void {
 
   if (status.isComplete) {
     console.log();
-    console.log(chalk.green('All artifacts complete!'));
+    console.log(chalk.green('所有制品已完成！'));
   }
 }

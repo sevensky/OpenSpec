@@ -51,21 +51,21 @@ export class CompletionCommand {
 
       // Shell was detected but not supported
       if (detectionResult.detected && !detectionResult.shell) {
-        console.error(`Error: Shell '${detectionResult.detected}' is not supported yet. Currently supported: ${CompletionFactory.getSupportedShells().join(', ')}`);
+        console.error(`错误: Shell '${detectionResult.detected}' 暂不支持。当前支持的 Shell: ${CompletionFactory.getSupportedShells().join(', ')}`);
         process.exitCode = 1;
         return null;
       }
 
       // No shell specified and cannot auto-detect
-      console.error('Error: Could not auto-detect shell. Please specify shell explicitly.');
-      console.error(`Usage: openspec completion ${operationName} [shell]`);
-      console.error(`Currently supported: ${CompletionFactory.getSupportedShells().join(', ')}`);
+      console.error('错误: 无法自动检测 Shell。请显式指定 Shell。');
+      console.error(`用法: openspec completion ${operationName} [shell]`);
+      console.error(`当前支持的 Shell: ${CompletionFactory.getSupportedShells().join(', ')}`);
       process.exitCode = 1;
       return null;
     }
 
     if (!CompletionFactory.isSupported(normalizedShell)) {
-      console.error(`Error: Shell '${normalizedShell}' is not supported yet. Currently supported: ${CompletionFactory.getSupportedShells().join(', ')}`);
+      console.error(`错误: Shell '${normalizedShell}' 暂不支持。当前支持的 Shell: ${CompletionFactory.getSupportedShells().join(', ')}`);
       process.exitCode = 1;
       return null;
     }
@@ -125,7 +125,7 @@ export class CompletionCommand {
     const generator = CompletionFactory.createGenerator(shell);
     const installer = CompletionFactory.createInstaller(shell);
 
-    const spinner = ora(`Installing ${shell} completion script...`).start();
+    const spinner = ora(`正在安装 ${shell} 补全脚本...`).start();
 
     try {
       // Generate the completion script
@@ -140,9 +140,9 @@ export class CompletionCommand {
         console.log(`✓ ${result.message}`);
 
         if (verbose && result.installedPath) {
-          console.log(`  Installed to: ${result.installedPath}`);
+          console.log(`  安装到: ${result.installedPath}`);
           if (result.backupPath) {
-            console.log(`  Backup created: ${result.backupPath}`);
+            console.log(`  备份创建于: ${result.backupPath}`);
           }
 
           // Check if any shell config was updated
@@ -156,7 +156,7 @@ export class CompletionCommand {
               powershell: '$PROFILE',
             };
             const configPath = configPaths[shell] || 'config file';
-            console.log(`  ${configPath} configured automatically`);
+            console.log(`  ${configPath} 已自动配置`);
           }
         }
 
@@ -190,7 +190,7 @@ export class CompletionCommand {
             };
             const reloadCmd = reloadCommands[shell] || `restart your ${shell} shell`;
 
-            console.log(`Restart your shell or run: ${reloadCmd}`);
+            console.log(`重启你的 Shell 或运行: ${reloadCmd}`);
           }
         }
       } else {
@@ -199,7 +199,7 @@ export class CompletionCommand {
       }
     } catch (error) {
       spinner.stop();
-      console.error(`✗ Failed to install completion script: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`✗ 安装补全脚本失败: ${error instanceof Error ? error.message : String(error)}`);
       process.exitCode = 1;
     }
   }
@@ -224,17 +224,17 @@ export class CompletionCommand {
       const configPath = configPaths[shell] || `${shell} configuration`;
 
       const confirmed = await confirm({
-        message: `Remove OpenSpec configuration from ${configPath}?`,
+        message: `从 ${configPath} 移除 OpenSpec 配置？`,
         default: false,
       });
 
       if (!confirmed) {
-        console.log('Uninstall cancelled.');
+        console.log('卸载已取消。');
         return;
       }
     }
 
-    const spinner = ora(`Uninstalling ${shell} completion script...`).start();
+    const spinner = ora(`正在卸载 ${shell} 补全脚本...`).start();
 
     try {
       const result = await installer.uninstall();
@@ -249,7 +249,7 @@ export class CompletionCommand {
       }
     } catch (error) {
       spinner.stop();
-      console.error(`✗ Failed to uninstall completion script: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`✗ 卸载补全脚本失败: ${error instanceof Error ? error.message : String(error)}`);
       process.exitCode = 1;
     }
   }

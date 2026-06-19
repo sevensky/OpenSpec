@@ -98,7 +98,7 @@ export class ListCommand {
         if (json) {
           console.log(JSON.stringify({ changes: [] }));
         } else {
-          console.log('No active changes found.');
+          console.log('未找到活跃变更。');
         }
         return;
       }
@@ -139,7 +139,7 @@ export class ListCommand {
       }
 
       // Display results
-      console.log('Changes:');
+      console.log('变更：');
       const padding = '  ';
       const nameWidth = Math.max(...changes.map(c => c.name.length));
       for (const change of changes) {
@@ -156,14 +156,14 @@ export class ListCommand {
     try {
       await fs.access(specsDir);
     } catch {
-      console.log('No specs found.');
+      console.log('未找到规格。');
       return;
     }
 
     const entries = await fs.readdir(specsDir, { withFileTypes: true });
     const specDirs = entries.filter(e => e.isDirectory()).map(e => e.name);
     if (specDirs.length === 0) {
-      console.log('No specs found.');
+      console.log('未找到规格。');
       return;
     }
 
@@ -183,7 +183,7 @@ export class ListCommand {
     }
 
     specs.sort((a, b) => a.id.localeCompare(b.id));
-    console.log('Specs:');
+    console.log('规格：');
     const padding = '  ';
     const nameWidth = Math.max(...specs.map(s => s.id.length));
     for (const spec of specs) {

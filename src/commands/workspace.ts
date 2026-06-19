@@ -66,7 +66,7 @@ function printJson(payload: unknown): void {
 }
 
 function printWorkspaceSetupIntro(): void {
-  console.log(chalk.bold('Workspace setup'));
+  console.log(chalk.bold('工作区设置'));
   console.log('');
 }
 
@@ -84,12 +84,12 @@ async function promptWorkspaceName(initialName?: string): Promise<string> {
 
   const { input } = await import('@inquirer/prompts');
 
-  console.log(chalk.bold('[1/5] Name the workspace'));
-  console.log(chalk.dim('Use a stable name for the repo group, e.g. platform.'));
+  console.log(chalk.bold('[1/5] 命名工作区'));
+  console.log(chalk.dim('为仓库组使用一个稳定的名称，例如 platform。'));
   console.log('');
 
   return input({
-    message: 'Workspace name:',
+    message: '工作区名称：',
     required: true,
     theme: workspacePromptTheme,
     validate(value: string) {
@@ -97,7 +97,7 @@ async function promptWorkspaceName(initialName?: string): Promise<string> {
         validateWorkspaceNameForSetup(value);
         return true;
       } catch {
-        return 'Workspace names must be kebab-case with lowercase letters, numbers, and single hyphen separators.';
+        return '工作区名称必须是小写字母、数字和单连字符分隔的 kebab-case 格式。';
       }
     },
   });
@@ -109,7 +109,7 @@ function parseSetupToolsOption(tools: string): string[] {
   } catch (error) {
     throw new WorkspaceCliError(asErrorMessage(error), 'invalid_workspace_setup_tools', {
       target: 'workspace.skills',
-      fix: `Use --tools all, --tools none, or one of: ${getWorkspaceSkillToolIds().join(', ')}`,
+      fix: `请使用 --tools all、--tools none，或以下之一：${getWorkspaceSkillToolIds().join(', ')}`,
     });
   }
 }
@@ -120,7 +120,7 @@ function parseUpdateToolsOption(tools: string): string[] {
   } catch (error) {
     throw new WorkspaceCliError(asErrorMessage(error), 'invalid_workspace_update_tools', {
       target: 'workspace.skills',
-      fix: `Use --tools all, --tools none, or one of: ${getWorkspaceSkillToolIds().join(', ')}`,
+      fix: `请使用 --tools all、--tools none，或以下之一：${getWorkspaceSkillToolIds().join(', ')}`,
     });
   }
 }
@@ -148,12 +148,12 @@ async function promptWorkspaceSkillAgents(
   if (preferredAgentId) {
     const preferredTool = tools.find((tool) => tool.value === preferredAgentId);
     if (preferredTool) {
-      console.log(`${preferredTool.name} matches your preferred opener and is pre-selected.`);
+      console.log(`${preferredTool.name} 与您偏好的打开方式匹配，已预选。`);
     }
   }
 
   return searchableMultiSelect({
-    message: 'Which agents should get OpenSpec skills in this workspace?',
+    message: '哪些 Agent 应该在此工作区中获得 OpenSpec 技能？',
     pageSize: 15,
     choices: sortedChoices,
   });
@@ -161,25 +161,25 @@ async function promptWorkspaceSkillAgents(
 
 function printStatusLines(statuses: WorkspaceStatus[]): void {
   for (const status of statuses) {
-    const label = status.severity === 'warning' ? 'Warning' : 'Issue';
-    console.log(`${label}: ${status.message}`);
+    const label = status.severity === 'warning' ? '警告' : '问题';
+    console.log(`${label}：${status.message}`);
     if (status.fix) {
-      console.log(`Fix: ${status.fix}`);
+      console.log(`修复：${status.fix}`);
     }
   }
 }
 
 function printLinksHuman(links: WorkspaceOutput['links']): void {
   if (links.length === 0) {
-    console.log('  (no linked repos or folders)');
+    console.log('  （无已链接的仓库或文件夹）');
     return;
   }
 
   for (const link of links) {
-    const suffix = link.status.some((status) => status.severity === 'error') ? ' [issue]' : '';
-    console.log(`  ${link.name} -> ${link.path ?? '(no local path recorded)'}${suffix}`);
+    const suffix = link.status.some((status) => status.severity === 'error') ? ' [问题]' : '';
+    console.log(`  ${link.name} -> ${link.path ?? '（未记录本地路径）'}${suffix}`);
     if (link.repo_specs_path) {
-      console.log(`    repo specs: ${link.repo_specs_path}`);
+      console.log(`    仓库规格：${link.repo_specs_path}`);
     }
   }
 }
@@ -192,23 +192,24 @@ function collectWorkspaceIssues(workspace: WorkspaceListOutput): WorkspaceStatus
 }
 
 function printDoctorHuman(result: { workspace: WorkspaceOutput; status: WorkspaceStatus[] }): void {
-  console.log(`Workspace: ${result.workspace.name}`);
-  console.log(`Location: ${result.workspace.root}`);
+  console.log(`工作区：${result.workspace.name}`);
+  console.log(`位置：${result.workspace.root}`);
   if (result.workspace.context) {
     const selector = result.workspace.context.store_selector;
-    const suffix = selector.kind === 'path' ? ` via ${selector.path}` : '';
+    const suffix = selector.kind === 'path' ? ` 通过 ${selector.path}` : '';
     console.log(
-      `Context: ${result.workspace.context.store}/${result.workspace.context.initiative}${suffix}`
+      `上下文：${result.workspace.context.store}/${result.workspace.context.initiative}${suffix}`
     );
   } else {
-    console.log('Context: (none)');
+    console.log('上下文：（无）');
   }
+  console.log(`规划路径：${result.workspace.planning_path}`);
   console.log('');
   printStatusLines(result.status);
   if (result.status.length > 0) {
     console.log('');
   }
-  console.log('Linked repos or folders:');
+  console.log('已链接的仓库或文件夹：');
   printLinksHuman(result.workspace.links);
 
   const issues = collectWorkspaceIssues(result.workspace);
@@ -224,53 +225,53 @@ function printDoctorHuman(result: { workspace: WorkspaceOutput; status: Workspac
 
   if (issues.length === 0) {
     console.log('');
-    console.log('No workspace issues found.');
+    console.log('未发现工作区问题。');
     return;
   }
 
   console.log('');
-  console.log('Issues:');
+  console.log('问题：');
   for (const issue of issues) {
     console.log(`  - ${issue.message}`);
     if (issue.target) {
-      console.log(`    Target: ${issue.target}`);
+      console.log(`    目标：${issue.target}`);
     }
     if (issue.fix) {
-      console.log(`    Fix: ${issue.fix}`);
+      console.log(`    修复：${issue.fix}`);
     }
   }
 }
 
 function printWorkspaceListHuman(workspaces: WorkspaceListOutput[]): void {
-  console.log(chalk.bold(`OpenSpec workspaces (${workspaces.length})`));
+  console.log(chalk.bold(`OpenSpec 工作区（${workspaces.length}）`));
 
   for (const workspace of workspaces) {
     console.log('');
     console.log(chalk.bold(workspace.name));
-    console.log(`  Location: ${workspace.root}`);
+    console.log(`  位置：${workspace.root}`);
 
     if (workspace.status.length > 0) {
-      console.log('  Status:');
+      console.log('  状态：');
       for (const status of workspace.status) {
-        const statusLabel = status.severity === 'warning' ? chalk.yellow('Warning') : chalk.red('Issue');
-        console.log(`    ${statusLabel}: ${status.message}`);
+        const statusLabel = status.severity === 'warning' ? chalk.yellow('警告') : chalk.red('问题');
+        console.log(`    ${statusLabel}：${status.message}`);
         if (status.fix) {
-          console.log(`    Fix: ${status.fix}`);
+          console.log(`    修复：${status.fix}`);
         }
       }
     }
 
-    console.log(`  Linked repos or folders (${workspace.links.length}):`);
+    console.log(`  已链接的仓库或文件夹（${workspace.links.length}）：`);
     if (workspace.links.length === 0) {
-      console.log(chalk.dim('    (none)'));
+      console.log(chalk.dim('    （无）'));
       continue;
     }
 
     for (const link of workspace.links) {
-      const suffix = link.status.some((status) => status.severity === 'error') ? chalk.red(' [issue]') : '';
-      console.log(`    ${link.name} -> ${link.path ?? '(no local path recorded)'}${suffix}`);
+      const suffix = link.status.some((status) => status.severity === 'error') ? chalk.red(' [问题]') : '';
+      console.log(`    ${link.name} -> ${link.path ?? '（未记录本地路径）'}${suffix}`);
       if (link.repo_specs_path) {
-        console.log(chalk.dim(`      repo specs: ${link.repo_specs_path}`));
+        console.log(chalk.dim(`      仓库规格：${link.repo_specs_path}`));
       }
     }
   }
@@ -281,18 +282,18 @@ function printWorkspaceCheckSummaryHuman(result: { workspace: WorkspaceOutput; s
   const issues = collectWorkspaceIssues(result.workspace);
 
   if (issues.length === 0) {
-    console.log('  No workspace issues found.');
+    console.log('  未发现工作区问题。');
     return;
   }
 
-  console.log('  Issues:');
+  console.log('  问题：');
   for (const issue of issues) {
     console.log(`    - ${issue.message}`);
     if (issue.target) {
-      console.log(`      Target: ${issue.target}`);
+      console.log(`      目标：${issue.target}`);
     }
     if (issue.fix) {
-      console.log(`      Fix: ${issue.fix}`);
+      console.log(`      修复：${issue.fix}`);
     }
   }
 }
@@ -304,55 +305,55 @@ function printLinkMutationHuman(
   printStatusLines(payload.status);
   console.log(heading);
   console.log(`  ${payload.link.name} -> ${payload.link.path}`);
-  console.log(`Workspace: ${payload.workspace.name}`);
+  console.log(`工作区：${payload.workspace.name}`);
 }
 
 function formatWorkspaceSkillAgentResult(result: { name: string; workflow_ids?: string[] }): string {
   const workflowCount = result.workflow_ids?.length ?? 0;
-  const workflowLabel = workflowCount === 1 ? '1 workflow' : `${workflowCount} workflows`;
-  return `${result.name} (${workflowLabel})`;
+  const workflowLabel = workflowCount === 1 ? '1 个工作流' : `${workflowCount} 个工作流`;
+  return `${result.name}（${workflowLabel}）`;
 }
 
 function formatWorkspaceSkillRemovedResult(result: { name: string; workflow_ids?: string[] }): string {
   const workflowCount = result.workflow_ids?.length ?? 0;
-  const workflowLabel = workflowCount === 1 ? '1 workflow' : `${workflowCount} workflows`;
-  return `${result.name} (${workflowLabel} removed)`;
+  const workflowLabel = workflowCount === 1 ? '1 个工作流' : `${workflowCount} 个工作流`;
+  return `${result.name}（${workflowLabel} 已移除）`;
 }
 
 function printWorkspaceSkillReportHuman(report: WorkspaceSkillInstallationReport): void {
-  console.log('Agent skills:');
-  console.log(`  Profile: ${report.profile}`);
+  console.log('Agent 技能：');
+  console.log(`  配置：${report.profile}`);
   console.log(
-    `  Workflows: ${report.workflow_ids.length > 0 ? report.workflow_ids.join(', ') : '(none selected)'}`
+    `  工作流：${report.workflow_ids.length > 0 ? report.workflow_ids.join(', ') : '（未选择）'}`
   );
 
   if (report.generated.length > 0) {
-    console.log(`  Generated: ${report.generated.map(formatWorkspaceSkillAgentResult).join(', ')}`);
+    console.log(`  已生成：${report.generated.map(formatWorkspaceSkillAgentResult).join(', ')}`);
   }
 
   if (report.added.length > 0) {
-    console.log(`  Added: ${report.added.map(formatWorkspaceSkillAgentResult).join(', ')}`);
+    console.log(`  已添加：${report.added.map(formatWorkspaceSkillAgentResult).join(', ')}`);
   }
 
   if (report.refreshed.length > 0) {
-    console.log(`  Refreshed: ${report.refreshed.map(formatWorkspaceSkillAgentResult).join(', ')}`);
+    console.log(`  已刷新：${report.refreshed.map(formatWorkspaceSkillAgentResult).join(', ')}`);
   }
 
   if (report.removed.length > 0) {
-    console.log(`  Removed: ${report.removed.map(formatWorkspaceSkillRemovedResult).join(', ')}`);
+    console.log(`  已移除：${report.removed.map(formatWorkspaceSkillRemovedResult).join(', ')}`);
   }
 
   if (report.skipped.length > 0) {
     for (const skipped of report.skipped) {
-      const prefix = skipped.name ? `${skipped.name}: ` : '';
-      console.log(`  Skipped: ${prefix}${skipped.message}`);
+      const prefix = skipped.name ? `${skipped.name}：` : '';
+      console.log(`  已跳过：${prefix}${skipped.message}`);
     }
   }
 
   if (report.failed.length > 0) {
     console.log(
       chalk.red(
-        `  Failed: ${report.failed.map((failure) => `${failure.name} (${failure.error})`).join(', ')}`
+        `  失败：${report.failed.map((failure) => `${failure.name}（${failure.error}）`).join(', ')}`
       )
     );
   }
@@ -397,11 +398,11 @@ function resolveUpdateWorkspaceName(
 ): string | undefined {
   if (positionalName && options.workspace && positionalName !== options.workspace) {
     throw new WorkspaceCliError(
-      `Conflicting workspace selectors: positional '${positionalName}' and --workspace '${options.workspace}'.`,
+      `工作区选择器冲突：位置参数 '${positionalName}' 和 --workspace '${options.workspace}'。`,
       'workspace_selection_conflict',
       {
         target: 'workspace.name',
-        fix: 'Use either the positional workspace name or --workspace with the same value.',
+        fix: '请使用位置参数的工作区名称或 --workspace 并传相同的值。',
       }
     );
   }
@@ -410,25 +411,25 @@ function resolveUpdateWorkspaceName(
 }
 
 function printWorkspaceOpenHuman(prepared: PreparedWorkspaceOpen): void {
-  console.log(`Opening workspace: ${prepared.selected.name}`);
-  console.log(`Location: ${prepared.selected.root}`);
+  console.log(`正在打开工作区：${prepared.selected.name}`);
+  console.log(`位置：${prepared.selected.root}`);
   if (prepared.initiative) {
-    console.log(`Initiative: ${prepared.initiative.store}/${prepared.initiative.id}`);
-    console.log(`Initiative path: ${prepared.initiative.root}`);
+    console.log(`计划：${prepared.initiative.store}/${prepared.initiative.id}`);
+    console.log(`计划路径：${prepared.initiative.root}`);
   }
-  console.log(`Opener: ${getWorkspaceOpenerLabel(prepared.opener)}`);
+  console.log(`打开方式：${getWorkspaceOpenerLabel(prepared.opener)}`);
 
   if (prepared.skipped.length === 0) {
     return;
   }
 
   console.log('');
-  console.log('Skipped linked repos or folders:');
+  console.log('跳过的已链接仓库或文件夹：');
   for (const link of prepared.skipped) {
-    const location = link.path ?? '(no local path recorded)';
+    const location = link.path ?? '（未记录本地路径）';
     console.log(`  ${link.name} -> ${location}`);
   }
-  console.log('Repair skipped links with openspec workspace doctor.');
+  console.log('请使用 openspec workspace doctor 修复跳过的链接。');
 }
 
 class WorkspaceCommand {
@@ -438,7 +439,7 @@ class WorkspaceCommand {
 
       if (options.json && !noInteractive) {
         throw new WorkspaceCliError(
-          'workspace setup --json requires --no-interactive.',
+          'workspace setup --json 需要 --no-interactive。',
           'setup_json_requires_no_interactive',
           {
             fix: 'openspec workspace setup --no-interactive --json --name <name> --link <path>',
@@ -453,7 +454,7 @@ class WorkspaceCommand {
 
       if (!interactive && (!options.name || (options.link ?? []).length === 0)) {
         throw new WorkspaceCliError(
-          'workspace setup --no-interactive requires --name <name> and at least one --link <path>.',
+          'workspace setup --no-interactive 需要 --name <name> 和至少一个 --link <path>。',
           'missing_setup_inputs',
           {
             fix: 'openspec workspace setup --no-interactive --name platform --link /path/to/repo',
@@ -467,10 +468,10 @@ class WorkspaceCommand {
       const links = interactive ? await promptSetupLinks() : await parseSetupLinks(options.link);
       if (interactive) {
         console.log('');
-        console.log(chalk.bold('[3/5] Choose preferred opener'));
+        console.log(chalk.bold('[3/5] 选择偏好打开方式'));
       }
       const preferredOpener = interactive
-        ? await promptPreferredOpener('Preferred opener:')
+        ? await promptPreferredOpener('偏好打开方式：')
         : parseSetupOpenerOption(options.opener);
 
       let selectedWorkspaceSkillAgents: string[] | undefined;
@@ -478,16 +479,16 @@ class WorkspaceCommand {
         selectedWorkspaceSkillAgents = parseSetupToolsOption(options.tools);
       } else if (interactive) {
         console.log('');
-        console.log(chalk.bold('[4/5] Install agent skills'));
-        console.log(chalk.dim('Choose which coding agents should get OpenSpec skills in this workspace.'));
-        console.log(chalk.dim('Press Enter with no agents selected to skip skill installation for now.'));
+        console.log(chalk.bold('[4/5] 安装 Agent 技能'));
+        console.log(chalk.dim('选择哪些编码 Agent 应在此工作区中获得 OpenSpec 技能。'));
+        console.log(chalk.dim('若不选择任何 Agent 直接按回车，则暂时跳过技能安装。'));
         console.log('');
         selectedWorkspaceSkillAgents = await promptWorkspaceSkillAgents(preferredOpener);
       }
 
       if (Object.keys(links).length === 0) {
         throw new WorkspaceCliError(
-          'workspace setup --no-interactive requires --name <name> and at least one --link <path>.',
+          'workspace setup --no-interactive 需要 --name <name> 和至少一个 --link <path>。',
           'missing_setup_inputs',
           {
             fix: 'openspec workspace setup --no-interactive --name platform --link /path/to/repo',
@@ -497,7 +498,7 @@ class WorkspaceCommand {
 
       if (interactive) {
         console.log('');
-        console.log(chalk.bold('[5/5] Create workspace files'));
+        console.log(chalk.bold('[5/5] 创建工作区文件'));
       }
 
       const workspace = await createManagedWorkspace(workspaceName, links, preferredOpener);
@@ -505,7 +506,7 @@ class WorkspaceCommand {
         selectedWorkspaceSkillAgents === undefined
           ? createWorkspaceSkillSkippedReport(
               'tools_omitted',
-              'No workspace skills were installed. Run openspec workspace update --tools <ids> to install them later.'
+              '未安装任何工作区技能。请稍后运行 openspec workspace update --tools <ids> 来安装。'
             )
           : await generateWorkspaceAgentSkills(workspace.root, selectedWorkspaceSkillAgents);
 
@@ -530,16 +531,18 @@ class WorkspaceCommand {
         return;
       }
 
-      console.log(chalk.green('Workspace setup complete'));
+      console.log(chalk.green('工作区设置完成'));
       console.log('');
       printWorkspaceListHuman([doctorResult.workspace]);
       console.log('');
-      console.log('Workspace check:');
+      console.log(`规划路径：${doctorResult.workspace.planning_path}`);
+      console.log('');
+      console.log('工作区检查：');
       printWorkspaceCheckSummaryHuman(doctorResult);
       console.log('');
       printWorkspaceSkillReportHuman(skillReport);
       console.log('');
-      console.log('Next useful commands:');
+      console.log('后续常用命令：');
       console.log(`  openspec workspace doctor --workspace ${workspace.name}`);
       console.log(`  openspec workspace update --workspace ${workspace.name} --tools <ids>`);
       console.log('  openspec workspace list');
@@ -562,7 +565,7 @@ class WorkspaceCommand {
       }
 
       if (workspaces.length === 0) {
-        console.log("No OpenSpec workspaces found. Run 'openspec workspace setup' first.");
+        console.log("未找到 OpenSpec 工作区。请先运行 'openspec workspace setup'。");
         return;
       }
 
@@ -580,7 +583,7 @@ class WorkspaceCommand {
     try {
       if (!nameOrPath) {
         throw new WorkspaceCliError(
-          'workspace link requires a repo or folder path.',
+          'workspace link 需要一个仓库或文件夹路径。',
           'missing_link_path',
           {
             fix: 'openspec workspace link /path/to/repo',
@@ -596,7 +599,7 @@ class WorkspaceCommand {
         return;
       }
 
-      printLinkMutationHuman('Linked repo or folder:', payload);
+      printLinkMutationHuman('已链接的仓库或文件夹：', payload);
     } catch (error) {
       this.handleFailure(options.json, { workspace: null, link: null, status: [] }, error);
     }
@@ -610,7 +613,7 @@ class WorkspaceCommand {
     try {
       if (!linkNameInput || !linkPath) {
         throw new WorkspaceCliError(
-          'workspace relink requires a link name and repo or folder path.',
+          'workspace relink 需要链接名称和仓库或文件夹路径。',
           'missing_relink_arguments',
           {
             fix: 'openspec workspace relink <name> /path/to/repo',
@@ -626,7 +629,7 @@ class WorkspaceCommand {
         return;
       }
 
-      printLinkMutationHuman('Relinked repo or folder:', payload);
+      printLinkMutationHuman('已重新链接的仓库或文件夹：', payload);
     } catch (error) {
       this.handleFailure(options.json, { workspace: null, link: null, status: [] }, error);
     }
@@ -706,9 +709,9 @@ class WorkspaceCommand {
       return;
     }
 
-    console.log(chalk.green('Workspace update complete'));
-    console.log(`Workspace: ${doctorResult.workspace.name}`);
-    console.log(`Location: ${doctorResult.workspace.root}`);
+    console.log(chalk.green('工作区更新完成'));
+    console.log(`工作区：${doctorResult.workspace.name}`);
+    console.log(`位置：${doctorResult.workspace.root}`);
     console.log('');
     printStatusLines(doctorResult.status);
     if (doctorResult.status.length > 0) {
@@ -716,7 +719,7 @@ class WorkspaceCommand {
     }
     printWorkspaceSkillReportHuman(skillReport);
     console.log('');
-    console.log('Next useful commands:');
+    console.log('后续常用命令：');
     console.log(`  openspec workspace doctor --workspace ${doctorResult.workspace.name}`);
     console.log(`  openspec workspace update --workspace ${doctorResult.workspace.name} --tools <ids>`);
 
@@ -756,7 +759,7 @@ class WorkspaceCommand {
     error: unknown
   ): void {
     if (!json && isPromptCancellationError(error)) {
-      console.error('Cancelled.');
+      console.error('已取消。');
       process.exitCode = 130;
       return;
     }
@@ -768,9 +771,9 @@ class WorkspaceCommand {
     }
 
     const status = asStatus(error);
-    console.error(`Error: ${status.message}`);
+    console.error(`错误：${status.message}`);
     if (status.fix) {
-      console.error(`Fix: ${status.fix}`);
+      console.error(`修复：${status.fix}`);
     }
     process.exitCode = 1;
   }
@@ -786,4 +789,5 @@ export async function runWorkspaceUpdate(
 
 export function registerWorkspaceCommand(program: Command): void {
   registerWorkspaceCommandWith(program, new WorkspaceCommand());
+}
 }

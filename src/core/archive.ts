@@ -68,7 +68,7 @@ export class ArchiveCommand {
     if (!changeName) {
       const selectedChange = await this.selectChange(changesDir);
       if (!selectedChange) {
-        console.log('No change selected. Aborting.');
+        console.log('未选择变更，已中止。');
         return;
       }
       changeName = selectedChange;
@@ -100,7 +100,7 @@ export class ArchiveCommand {
         const changeReport = await validator.validateChange(changeFile);
         // Proposal validation is informative only (do not block archive)
         if (!changeReport.valid) {
-          console.log(chalk.yellow(`\nProposal warnings in proposal.md (non-blocking):`));
+          console.log(chalk.yellow(`\nproposal.md 中的提案警告（非阻塞）：`));
           for (const issue of changeReport.issues) {
             const symbol = issue.level === 'ERROR' ? '⚠' : (issue.level === 'WARNING' ? '⚠' : 'ℹ');
             console.log(chalk.yellow(`  ${symbol} ${issue.message}`));
@@ -133,7 +133,7 @@ export class ArchiveCommand {
         const deltaReport = await validator.validateChangeDeltaSpecs(changeDir);
         if (!deltaReport.valid) {
           hasValidationErrors = true;
-          console.log(chalk.red(`\nValidation errors in change delta specs:`));
+          console.log(chalk.red(`\n变更 delta 规格中的验证错误：`));
           for (const issue of deltaReport.issues) {
             if (issue.level === 'ERROR') {
               console.log(chalk.red(`  ✗ ${issue.message}`));
@@ -145,8 +145,8 @@ export class ArchiveCommand {
       }
 
       if (hasValidationErrors) {
-        console.log(chalk.red('\nValidation failed. Please fix the errors before archiving.'));
-        console.log(chalk.yellow('To skip validation (not recommended), use --no-validate flag.'));
+        console.log(chalk.red('\n验证失败。请在归档前修复错误。'));
+        console.log(chalk.yellow('要跳过验证（不推荐），请使用 --no-validate 标志。'));
         return;
       }
     } else {
@@ -156,52 +156,52 @@ export class ArchiveCommand {
       if (!options.yes) {
         const { confirm } = await import('@inquirer/prompts');
         const proceed = await confirm({
-          message: chalk.yellow('⚠️  WARNING: Skipping validation may archive invalid specs. Continue? (y/N)'),
+          message: chalk.yellow('⚠️  警告：跳过验证可能导致归档无效规格。是否继续？(y/N)'),
           default: false
         });
         if (!proceed) {
-          console.log('Archive cancelled.');
+          console.log('归档已取消。');
           return;
         }
       } else {
-        console.log(chalk.yellow(`\n⚠️  WARNING: Skipping validation may archive invalid specs.`));
+        console.log(chalk.yellow(`\n⚠️  警告：跳过验证可能导致归档无效规格。`));
       }
       
-      console.log(chalk.yellow(`[${timestamp}] Validation skipped for change: ${changeName}`));
-      console.log(chalk.yellow(`Affected files: ${changeDir}`));
+      console.log(chalk.yellow(`[${timestamp}] 已跳过变更验证: ${changeName}`));
+      console.log(chalk.yellow(`受影响文件: ${changeDir}`));
     }
 
     // Show progress and check for incomplete tasks
     const progress = await getTaskProgressForChange(changesDir, changeName);
     const status = formatTaskStatus(progress);
-    console.log(`Task status: ${status}`);
+    console.log(`任务状态: ${status}`);
 
     const incompleteTasks = Math.max(progress.total - progress.completed, 0);
     if (incompleteTasks > 0) {
       if (!options.yes) {
         const { confirm } = await import('@inquirer/prompts');
         const proceed = await confirm({
-          message: `Warning: ${incompleteTasks} incomplete task(s) found. Continue?`,
+          message: `警告：发现 ${incompleteTasks} 个未完成任务。是否继续？`,
           default: false
         });
         if (!proceed) {
-          console.log('Archive cancelled.');
+          console.log('归档已取消。');
           return;
         }
       } else {
-        console.log(`Warning: ${incompleteTasks} incomplete task(s) found. Continuing due to --yes flag.`);
+        console.log(`警告：发现 ${incompleteTasks} 个未完成任务。因 --yes 标志继续。`);
       }
     }
 
     // Handle spec updates unless skipSpecs flag is set
     if (options.skipSpecs) {
-      console.log('Skipping spec updates (--skip-specs flag provided).');
+      console.log('跳过规格更新（已提供 --skip-specs 标志）。');
     } else {
       // Find specs to update
       const specUpdates = await findSpecUpdates(changeDir, mainSpecsDir);
       
       if (specUpdates.length > 0) {
-        console.log('\nSpecs to update:');
+        console.log('\n要更新的规格：');
         for (const update of specUpdates) {
           const status = update.exists ? 'update' : 'create';
           const capability = path.basename(path.dirname(update.target));
@@ -212,11 +212,11 @@ export class ArchiveCommand {
         if (!options.yes) {
           const { confirm } = await import('@inquirer/prompts');
           shouldUpdateSpecs = await confirm({
-            message: 'Proceed with spec updates?',
+            message: '是否继续更新规格？',
             default: true
           });
           if (!shouldUpdateSpecs) {
-            console.log('Skipping spec updates. Proceeding with archive.');
+            console.log('跳过规格更新，继续归档。');
           }
         }
 
@@ -230,7 +230,7 @@ export class ArchiveCommand {
             }
           } catch (err: any) {
             console.log(String(err.message || err));
-            console.log('Aborted. No files were changed.');
+            console.log('已中止。未修改任何文件。');
             return;
           }
 
@@ -241,12 +241,12 @@ export class ArchiveCommand {
             if (!skipValidation) {
               const report = await new Validator().validateSpecContent(specName, p.rebuilt);
               if (!report.valid) {
-                console.log(chalk.red(`\nValidation errors in rebuilt spec for ${specName} (will not write changes):`));
+                console.log(chalk.red(`\n重建规格 ${specName} 的验证错误（不会写入更改）：`));
                 for (const issue of report.issues) {
                   if (issue.level === 'ERROR') console.log(chalk.red(`  ✗ ${issue.message}`));
                   else if (issue.level === 'WARNING') console.log(chalk.yellow(`  ⚠ ${issue.message}`));
                 }
-                console.log('Aborted. No files were changed.');
+                console.log('已中止。未修改任何文件。');
                 return;
               }
             }
@@ -257,9 +257,9 @@ export class ArchiveCommand {
             totals.renamed += p.counts.renamed;
           }
           console.log(
-            `Totals: + ${totals.added}, ~ ${totals.modified}, - ${totals.removed}, → ${totals.renamed}`
+            `总计：+ ${totals.added} 新增, ~ ${totals.modified} 修改, - ${totals.removed} 删除, → ${totals.renamed} 重命名`
           );
-          console.log('Specs updated successfully.');
+          console.log('规格更新成功。');
         }
       }
     }
@@ -284,7 +284,7 @@ export class ArchiveCommand {
     // Move change to archive (uses copy+remove on EPERM/EXDEV, e.g. Windows)
     await moveDirectory(changeDir, archivePath);
 
-    console.log(`Change '${changeName}' archived as '${archiveName}'.`);
+    console.log(`变更 '${changeName}' 已归档为 '${archiveName}'。`);
   }
 
   private async selectChange(changesDir: string): Promise<string | null> {
@@ -297,7 +297,7 @@ export class ArchiveCommand {
       .sort();
 
     if (changeDirs.length === 0) {
-      console.log('No active changes found.');
+      console.log('未找到活跃变更。');
       return null;
     }
 

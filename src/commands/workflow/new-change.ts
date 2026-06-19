@@ -67,7 +67,7 @@ function validateWorkspaceAffectedAreas(planningHome: PlanningHome, affectedArea
   }
 
   if (planningHome.kind !== 'workspace') {
-    throw new Error('--areas can only be used when creating a workspace-scoped change');
+    throw new Error('--areas 只能在创建工作区范围的变更时使用');
   }
 
   const validAreas = new Set(planningHome.workspace?.links ?? []);
@@ -77,8 +77,8 @@ function validateWorkspaceAffectedAreas(planningHome: PlanningHome, affectedArea
     const validList = [...validAreas].sort((a, b) => a.localeCompare(b));
     const validMessage = validList.length > 0 ? validList.join(', ') : '(no registered links)';
     throw new Error(
-      `Invalid affected area${invalidAreas.length === 1 ? '' : 's'}: ${invalidAreas.join(', ')}. ` +
-        `Valid workspace link names: ${validMessage}`
+      `无效的影响区域：${invalidAreas.join(', ')}。` +
+        `有效的工作区链接名称：${validMessage}`
     );
   }
 }
@@ -106,11 +106,11 @@ function printCreatedChangeHuman(payload: NewChangeOutput, planningHome: Plannin
   }
 
   const location = formatChangeLocation(planningHome, payload.change.id);
-  const scope = planningHome.kind === 'workspace' ? 'workspace change' : 'change';
-  console.log(`Created ${scope} '${payload.change.id}' at ${location}/`);
-  console.log(`Schema: ${payload.change.schema}`);
+  const scope = planningHome.kind === 'workspace' ? '工作区变更' : '变更';
+  console.log(`已创建${scope} '${payload.change.id}' 于 ${location}/`);
+  console.log(`架构：${payload.change.schema}`);
   if (payload.initiative) {
-    console.log(`Initiative: ${formatInitiativeLink(payload.initiative)}`);
+    console.log(`计划：${formatInitiativeLink(payload.initiative)}`);
   }
 }
 
@@ -119,7 +119,7 @@ export async function newChangeCommand(name: string | undefined, options: NewCha
 
   try {
     if (!name) {
-      throw new Error('Missing required argument <name>');
+      throw new Error('缺少必需参数 <name>');
     }
 
     const validation = validateChangeName(name);
@@ -151,7 +151,7 @@ export async function newChangeCommand(name: string | undefined, options: NewCha
 
     const resolvedSchema = options.schema ?? planningHome.defaultSchema;
     if (spinner) {
-      spinner.start(`Creating change '${name}' with schema '${resolvedSchema}'...`);
+      spinner.start(`正在创建变更 '${name}'（架构：'${resolvedSchema}'）...`);
     }
 
     const workspaceGoal = planningHome.kind === 'workspace'
@@ -187,11 +187,11 @@ export async function newChangeCommand(name: string | undefined, options: NewCha
 
     if (planningHome.kind === 'workspace' && !initiative) {
       if (affectedAreas.length > 0) {
-        console.log(`Affected areas: ${affectedAreas.join(', ')}`);
+        console.log(`影响区域：${affectedAreas.join(', ')}`);
       } else {
-        console.log('Affected areas: unresolved; identify them in change metadata or coordination tasks as planning continues.');
+        console.log('影响区域：未指定；在规划过程中通过工作区规格或任务识别。');
       }
-      console.log('Next: run openspec status --change "' + name + '" to inspect workspace planning artifacts.');
+      console.log('下一步：运行 openspec status --change "' + name + '" 查看工作区规划制品。');
     }
   } catch (error) {
     spinner?.stop();
