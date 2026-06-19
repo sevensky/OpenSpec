@@ -790,4 +790,3 @@ export async function runWorkspaceUpdate(
 export function registerWorkspaceCommand(program: Command): void {
   registerWorkspaceCommandWith(program, new WorkspaceCommand());
 }
-}
