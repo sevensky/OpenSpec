@@ -33,7 +33,7 @@ describe('change show (interactive behavior)', () => {
       } catch (e) { err = e; }
       expect(err).toBeDefined();
       expect(err.status).not.toBe(0);
-      expect(err.stderr.toString()).toContain('Available IDs:');
+      expect(err.stderr.toString()).toContain('可用 ID:');
       expect(err.stderr.toString()).toContain('openspec change list');
     } finally {
       process.chdir(originalCwd);

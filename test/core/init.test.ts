@@ -187,7 +187,7 @@ describe('InitCommand', () => {
       const logCalls = (console.log as unknown as { mock: { calls: unknown[][] } }).mock.calls.flat().map(String);
       expect(
         logCalls.some(
-          (entry) => entry.includes('Commands skipped for: kimi') && entry.includes('(no adapter)'),
+          (entry) => entry.includes('已跳过命令：kimi') && entry.includes('（无适配器）'),
         ),
       ).toBe(true);
     });

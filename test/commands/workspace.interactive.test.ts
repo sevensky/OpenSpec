@@ -142,9 +142,9 @@ describe('workspace command interactive flows', () => {
     const { input, confirm, select } = await getPromptMocks();
 
     input.mockImplementation(async (options: { message: string; validate?: (value: string) => true | string }) => {
-      if (options.message === 'Workspace name:') {
+      if (options.message === '工作区名称：') {
         expect(options.validate?.('Bad_Name')).toBe(
-          'Workspace names must be kebab-case with lowercase letters, numbers, and single hyphen separators.'
+          '工作区名称必须是小写字母、数字和单连字符分隔的 kebab-case 格式。'
         );
         return 'platform';
       }
@@ -162,7 +162,7 @@ describe('workspace command interactive flows', () => {
 
     expect(process.exitCode).toBeUndefined();
     expect(input.mock.calls.map((call) => call[0].message)).toEqual([
-      'Workspace name:',
+      '工作区名称：',
       'Repo or folder path:',
     ]);
     expect(input.mock.calls[0][0]).toEqual(
@@ -193,7 +193,7 @@ describe('workspace command interactive flows', () => {
     await runWorkspaceCommand(['setup']);
 
     expect(process.exitCode).toBe(130);
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Cancelled.');
+    expect(consoleErrorSpy).toHaveBeenCalledWith('已取消。');
     expect(consoleErrorSpy).not.toHaveBeenCalledWith(
       expect.stringContaining('User force closed the prompt with SIGINT')
     );
@@ -209,7 +209,7 @@ describe('workspace command interactive flows', () => {
     const { input, confirm, select } = await getPromptMocks();
 
     input.mockImplementation(async (options: { message: string }) => {
-      if (options.message === 'Workspace name:') {
+      if (options.message === '工作区名称：') {
         return 'platform';
       }
 
@@ -224,7 +224,7 @@ describe('workspace command interactive flows', () => {
         return 'finish';
       }
 
-      if (options.message === 'Preferred opener:') {
+      if (options.message === '偏好打开方式：') {
         expect(options.choices?.slice(0, 2).map((choice) => choice.value).sort()).toEqual([
           'editor',
           'github-copilot',
@@ -258,7 +258,7 @@ describe('workspace command interactive flows', () => {
     const { input, select } = await getPromptMocks();
 
     input.mockImplementation(async (options: { message: string }) => {
-      if (options.message === 'Workspace name:') {
+      if (options.message === '工作区名称：') {
         return 'platform';
       }
 
@@ -273,7 +273,7 @@ describe('workspace command interactive flows', () => {
         return 'finish';
       }
 
-      if (options.message === 'Preferred opener:') {
+      if (options.message === '偏好打开方式：') {
         return 'codex-cli';
       }
 
@@ -283,7 +283,7 @@ describe('workspace command interactive flows', () => {
       message: string;
       choices: Array<{ value: string; preSelected?: boolean }>;
     }) => {
-      expect(options.message).toBe('Which agents should get OpenSpec skills in this workspace?');
+      expect(options.message).toBe('哪些 Agent 应该在此工作区中获得 OpenSpec 技能？');
       expect(options.choices.find((choice) => choice.value === 'codex')?.preSelected).toBe(true);
       expect(options.choices.find((choice) => choice.value === 'claude')?.preSelected).toBe(false);
       return ['codex', 'claude'];
@@ -309,7 +309,7 @@ describe('workspace command interactive flows', () => {
     const { input, confirm, select } = await getPromptMocks();
 
     input.mockImplementation(async (options: { message: string; validate?: (value: string) => true | string }) => {
-      if (options.message === 'Workspace name:') {
+      if (options.message === '工作区名称：') {
         return 'platform';
       }
 
@@ -337,7 +337,7 @@ describe('workspace command interactive flows', () => {
 
     expect(process.exitCode).toBeUndefined();
     expect(input.mock.calls.map((call) => call[0].message)).toEqual([
-      'Workspace name:',
+      '工作区名称：',
       'Repo or folder path:',
       'Another repo or folder path:',
       'Link name:',
@@ -358,7 +358,7 @@ describe('workspace command interactive flows', () => {
     const { input, confirm, select } = await getPromptMocks();
 
     input.mockImplementation(async (options: { message: string; validate?: (value: string) => true | string }) => {
-      if (options.message === 'Workspace name:') {
+      if (options.message === '工作区名称：') {
         return 'platform';
       }
 
@@ -380,7 +380,7 @@ describe('workspace command interactive flows', () => {
 
     expect(process.exitCode).toBeUndefined();
     expect(input.mock.calls.map((call) => call[0].message)).toEqual([
-      'Workspace name:',
+      '工作区名称：',
       'Repo or folder path:',
       'Link name:',
     ]);
@@ -420,7 +420,7 @@ describe('workspace command interactive flows', () => {
         ]),
       })
     );
-    expect(consoleLogSpy).toHaveBeenCalledWith('Workspace: checkout-web');
+    expect(consoleLogSpy).toHaveBeenCalledWith('工作区：checkout-web');
   });
 
   it('prompts for an opener during workspace open when no preference is stored', async () => {
@@ -452,7 +452,7 @@ describe('workspace command interactive flows', () => {
     expect(openerPrompt?.choices.map((choice: { value: string }) => choice.value)).toEqual(
       expect.arrayContaining(['editor', 'github-copilot'])
     );
-    expect(consoleLogSpy).toHaveBeenCalledWith('Opening workspace: platform');
+    expect(consoleLogSpy).toHaveBeenCalledWith('正在打开工作区：platform');
     expect(readWorkspaceState('platform').preferred_opener).toBeUndefined();
   });
 
@@ -517,7 +517,7 @@ describe('workspace command interactive flows', () => {
         message: 'Select workspace:',
       })
     );
-    expect(consoleLogSpy).toHaveBeenCalledWith('Opening workspace: checkout-web');
+    expect(consoleLogSpy).toHaveBeenCalledWith('正在打开工作区：checkout-web');
   });
 
   it('shows initiatives in the bare workspace open picker and creates a local view', async () => {
@@ -583,8 +583,8 @@ describe('workspace command interactive flows', () => {
         ]),
       })
     );
-    expect(consoleLogSpy).toHaveBeenCalledWith('Opening workspace: agent-trace-hooks');
-    expect(consoleLogSpy).toHaveBeenCalledWith('Initiative: team-context/agent-trace-hooks');
+    expect(consoleLogSpy).toHaveBeenCalledWith('正在打开工作区：agent-trace-hooks');
+    expect(consoleLogSpy).toHaveBeenCalledWith('计划：team-context/agent-trace-hooks');
     const workspaceState = readWorkspaceState('agent-trace-hooks');
     expect(workspaceState.context).toEqual({
       kind: 'initiative',
@@ -648,7 +648,7 @@ describe('workspace command interactive flows', () => {
 
     expect(process.exitCode).toBeUndefined();
     expect(input).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith('Opening workspace: context-only-launch');
+    expect(consoleLogSpy).toHaveBeenCalledWith('正在打开工作区：context-only-launch');
     const workspaceState = readWorkspaceState('context-only-launch');
     expect(workspaceState.context).toEqual({
       kind: 'initiative',

@@ -90,7 +90,7 @@ describe('ArchiveCommand', () => {
       
       // Verify warning was logged
       expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining('Warning: 2 incomplete task(s) found')
+        expect.stringContaining('警告：发现 2 个未完成任务')
       );
     });
 
@@ -119,9 +119,9 @@ Then expected result happens`;
       // Verify spec was created from skeleton and ADDED requirement applied
       const mainSpecPath = path.join(tempDir, 'openspec', 'specs', 'test-capability', 'spec.md');
       const updatedContent = await fs.readFile(mainSpecPath, 'utf-8');
-      expect(updatedContent).toContain('# test-capability Specification');
+      expect(updatedContent).toContain('# test-capability 规格说明');
       expect(updatedContent).toContain('## Purpose');
-      expect(updatedContent).toContain(`created by archiving change ${changeName}`);
+      expect(updatedContent).toContain(`由归档变更 ${changeName} 创建`);
       expect(updatedContent).toContain('## Requirements');
       expect(updatedContent).toContain('### Requirement: The system SHALL provide test capability');
       expect(updatedContent).toContain('#### Scenario: Basic test');
@@ -163,7 +163,7 @@ The system SHALL support logo and backgroundColor fields for gift cards.
       // Verify spec was created with only ADDED requirements
       const mainSpecPath = path.join(tempDir, 'openspec', 'specs', 'gift-card', 'spec.md');
       const updatedContent = await fs.readFile(mainSpecPath, 'utf-8');
-      expect(updatedContent).toContain('# gift-card Specification');
+      expect(updatedContent).toContain('# gift-card 规格说明');
       expect(updatedContent).toContain('### Requirement: Logo and Background Color');
       expect(updatedContent).toContain('#### Scenario: Display gift card with logo');
       // REMOVED requirements should not be in the final spec
@@ -204,7 +204,7 @@ Modified content.`;
       expect(console.log).toHaveBeenCalledWith(
         expect.stringContaining('new-capability: target spec does not exist; only ADDED requirements are allowed for new specs. MODIFIED and RENAMED operations require an existing spec.')
       );
-      expect(console.log).toHaveBeenCalledWith('Aborted. No files were changed.');
+      expect(console.log).toHaveBeenCalledWith('已中止。未修改任何文件。');
       
       // Verify spec was NOT created
       const mainSpecPath = path.join(tempDir, 'openspec', 'specs', 'new-capability', 'spec.md');
@@ -242,7 +242,7 @@ New feature description.
       expect(console.log).toHaveBeenCalledWith(
         expect.stringContaining('another-capability: target spec does not exist; only ADDED requirements are allowed for new specs. MODIFIED and RENAMED operations require an existing spec.')
       );
-      expect(console.log).toHaveBeenCalledWith('Aborted. No files were changed.');
+      expect(console.log).toHaveBeenCalledWith('已中止。未修改任何文件。');
       
       // Verify spec was NOT created
       const mainSpecPath = path.join(tempDir, 'openspec', 'specs', 'another-capability', 'spec.md');
@@ -286,7 +286,7 @@ New feature description.
       
       // Should complete without warnings
       expect(console.log).not.toHaveBeenCalledWith(
-        expect.stringContaining('incomplete task(s)')
+        expect.stringContaining('个未完成任务')
       );
       
       // Verify change was archived
@@ -329,7 +329,7 @@ New feature description.
       
       // Verify skip message was logged
       expect(console.log).toHaveBeenCalledWith(
-        'Skipping spec updates (--skip-specs flag provided).'
+        '跳过规格更新（已提供 --skip-specs 标志）。'
       );
       
       // Verify spec was NOT copied to main specs
@@ -416,13 +416,13 @@ Then expected result happens`;
       
       // Verify user was prompted about specs
       expect(mockConfirm).toHaveBeenCalledWith({
-        message: 'Proceed with spec updates?',
+        message: '是否继续更新规格？',
         default: true
       });
       
       // Verify skip message was logged
       expect(console.log).toHaveBeenCalledWith(
-        'Skipping spec updates. Proceeding with archive.'
+        '跳过规格更新，继续归档。'
       );
       
       // Verify spec was NOT copied to main specs
@@ -613,7 +613,7 @@ The system SHALL do B differently.
       expect(console.log).toHaveBeenCalledWith(
         expect.stringContaining('Requirement header "### Requirement: B" appears outside the main ## Requirements section.')
       );
-      expect(console.log).toHaveBeenCalledWith('Aborted. No files were changed.');
+      expect(console.log).toHaveBeenCalledWith('已中止。未修改任何文件。');
 
       const still = await fs.readFile(path.join(mainSpecDir, 'spec.md'), 'utf-8');
       expect(still).toBe(malformedMain);
@@ -663,7 +663,7 @@ new body`;
         expect.stringContaining('delta validation failed')
       );
       expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining('Aborted. No files were changed.')
+        expect.stringContaining('已中止。未修改任何文件。')
       );
 
       // Fix MODIFIED to reference New (should succeed)
@@ -766,7 +766,7 @@ E1 updated`);
 
       // Verify aggregated totals line was printed
       expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining('Totals: + 1, ~ 1, - 0, → 1')
+        expect.stringContaining('总计：+ 1 新增, ~ 1 修改, - 0 删除, → 1 重命名')
       );
     });
   });
@@ -834,7 +834,7 @@ E1 updated`);
       
       // Verify confirm was called
       expect(mockConfirm).toHaveBeenCalledWith({
-        message: 'Warning: 1 incomplete task(s) found. Continue?',
+        message: '警告：发现 1 个未完成任务。是否继续？',
         default: false
       });
     });
@@ -860,7 +860,7 @@ E1 updated`);
       await archiveCommand.execute(changeName, { noValidate: true });
       
       // Verify archive was cancelled
-      expect(console.log).toHaveBeenCalledWith('Archive cancelled.');
+      expect(console.log).toHaveBeenCalledWith('归档已取消。');
       
       // Verify change was not archived
       await expect(fs.access(changeDir)).resolves.not.toThrow();

@@ -100,12 +100,12 @@ describe('FeedbackCommand', () => {
 
       // Should display warning
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('GitHub CLI not found')
+        expect.stringContaining('未找到 GitHub CLI')
       );
 
       // Should show formatted feedback
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('--- FORMATTED FEEDBACK ---')
+        expect.stringContaining('--- 格式化反馈 ---')
       );
 
       // Should show manual submission URL
@@ -134,7 +134,7 @@ describe('FeedbackCommand', () => {
 
       // Should display warning
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('GitHub authentication required')
+        expect.stringContaining('需要 GitHub 认证')
       );
 
       // Should show auth instructions
@@ -144,7 +144,7 @@ describe('FeedbackCommand', () => {
 
       // Should show formatted feedback
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('--- FORMATTED FEEDBACK ---')
+        expect.stringContaining('--- 格式化反馈 ---')
       );
     });
   });
@@ -191,7 +191,7 @@ describe('FeedbackCommand', () => {
 
       // Should display success message
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Feedback submitted successfully')
+        expect.stringContaining('反馈提交成功')
       );
 
       // Should display issue URL
@@ -387,16 +387,16 @@ describe('FeedbackCommand', () => {
 
       // Verify formatted output structure
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('--- FORMATTED FEEDBACK ---')
+        expect.stringContaining('--- 格式化反馈 ---')
       );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Title: Feedback: Test message')
+        expect.stringContaining('标题：Feedback: Test message')
       );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Labels: feedback')
+        expect.stringContaining('标签：feedback')
       );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('--- END FEEDBACK ---')
+        expect.stringContaining('--- 反馈结束 ---')
       );
     });
 

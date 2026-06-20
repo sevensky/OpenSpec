@@ -46,7 +46,7 @@ describe('ListCommand', () => {
       const listCommand = new ListCommand();
       await listCommand.execute(tempDir, 'changes');
 
-      expect(logOutput).toEqual(['No active changes found.']);
+      expect(logOutput).toEqual(['未找到活跃变更。']);
     });
 
     it('should exclude archive directory', async () => {
@@ -63,7 +63,7 @@ describe('ListCommand', () => {
       const listCommand = new ListCommand();
       await listCommand.execute(tempDir, 'changes');
 
-      expect(logOutput).toContain('Changes:');
+      expect(logOutput).toContain('变更：');
       expect(logOutput.some(line => line.includes('my-change'))).toBe(true);
       expect(logOutput.some(line => line.includes('archive'))).toBe(false);
     });
@@ -156,7 +156,7 @@ Regular text that should be ignored
       const listCommand = new ListCommand();
       await listCommand.execute(tempDir);
 
-      expect(logOutput).toContain('Changes:');
+      expect(logOutput).toContain('变更：');
       expect(logOutput.some(line => line.includes('completed') && line.includes('✓ Complete'))).toBe(true);
       expect(logOutput.some(line => line.includes('partial') && line.includes('1/3 tasks'))).toBe(true);
       expect(logOutput.some(line => line.includes('no-tasks') && line.includes('No tasks'))).toBe(true);

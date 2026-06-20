@@ -87,7 +87,7 @@ describe('UpdateCommand', () => {
       await updateCommand.execute(testDir);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('No configured tools found')
+        expect.stringContaining('未发现已配置的工具')
       );
 
       consoleSpy.mockRestore();
@@ -134,7 +134,7 @@ Old instructions content
 
       // Check console output
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updating 1 tool(s): claude')
+        expect.stringContaining('正在更新 1 个工具：claude')
       );
 
       consoleSpy.mockRestore();
@@ -281,7 +281,7 @@ Old instructions content
 
       // Both tools should be updated
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updating 2 tool(s)')
+        expect.stringContaining('正在更新 2 个工具')
       );
 
       // Verify Claude skills updated
@@ -388,7 +388,7 @@ Old instructions content
 
       // Should report failure
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed')
+        expect.stringContaining('失败')
       );
 
       writeSpy.mockRestore();
@@ -432,12 +432,12 @@ Old instructions content
 
       // Cursor should still be updated - check the actual format from ora spinner
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updated: Cursor')
+        expect.stringContaining('已更新：Cursor')
       );
 
       // Claude should be reported as failed
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed')
+        expect.stringContaining('失败')
       );
 
       writeSpy.mockRestore();
@@ -457,7 +457,7 @@ Old instructions content
 
       // Should report no configured tools
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('No configured tools found')
+        expect.stringContaining('未发现已配置的工具')
       );
 
       consoleSpy.mockRestore();
@@ -480,7 +480,7 @@ Old instructions content
 
       // Should detect and update Claude
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updating 1 tool(s): claude')
+        expect.stringContaining('正在更新 1 个工具：claude')
       );
 
       consoleSpy.mockRestore();
@@ -557,9 +557,9 @@ Old instructions content
 
       await updateCommand.execute(testDir);
 
-      // The success output uses "✓ Updated: <name>"
+      // The success output uses "✓ 已更新：<name>"
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updated: Claude Code')
+        expect.stringContaining('已更新：Claude Code')
       );
 
       consoleSpy.mockRestore();
@@ -581,7 +581,7 @@ Old instructions content
       await updateCommand.execute(testDir);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Restart your IDE')
+        expect.stringContaining('重启你的 IDE')
       );
 
       consoleSpy.mockRestore();
@@ -599,7 +599,7 @@ Old instructions content
       await updateCommand.execute(testDir);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('up to date')
+        expect.stringContaining('已是最新')
       );
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('--force')
@@ -631,9 +631,9 @@ Legacy content without generatedBy
 
       await updateCommand.execute(testDir);
 
-      // Should show "unknown → version" in the update message
+      // Should show "未知版本 → version" in the update message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('unknown')
+        expect.stringContaining('未知版本')
       );
 
       consoleSpy.mockRestore();
@@ -719,12 +719,12 @@ Content
 
       // Should show "Force updating" message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Force updating')
+        expect.stringContaining('正在强制更新')
       );
 
       // Should show updated message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updated: Claude Code')
+        expect.stringContaining('已更新：Claude Code')
       );
 
       consoleSpy.mockRestore();
@@ -791,7 +791,7 @@ metadata:
 
       // Should show both tools being force updated
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Force updating 2 tool(s)')
+        expect.stringContaining('正在强制更新 2 个工具')
       );
 
       consoleSpy.mockRestore();
@@ -817,7 +817,7 @@ metadata:
       // Should show version in success message
       const { version } = await import('../../package.json');
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining(`(v${version})`)
+        expect.stringContaining(`（v${version}）`)
       );
 
       consoleSpy.mockRestore();
@@ -842,12 +842,12 @@ metadata:
 
       // Should show only Claude being updated
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updating 1 tool(s)')
+        expect.stringContaining('正在更新 1 个工具')
       );
 
       // Should mention Cursor is already up to date
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Already up to date: cursor')
+        expect.stringContaining('已是最新：cursor')
       );
 
       consoleSpy.mockRestore();
@@ -935,12 +935,12 @@ ${OPENSPEC_MARKERS.end}
 
       // Should show warning about --force
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Run with --force to auto-cleanup')
+        expect.stringContaining('使用 --force 自动清理旧版文件')
       );
 
       // Should continue with update
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updated: Claude Code')
+        expect.stringContaining('已更新：Claude Code')
       );
 
       // Legacy file should still exist (not cleaned up)
@@ -1129,7 +1129,7 @@ More user content after markers.
 
       // Should show detected tools message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Tools detected from legacy artifacts')
+        expect.stringContaining('从旧版 artifact 检测到以下工具')
       );
 
       // Should show Claude Code being set up
@@ -1139,7 +1139,7 @@ More user content after markers.
 
       // Should show getting started message for newly configured tools
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Getting started')
+        expect.stringContaining('快速上手')
       );
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('/opsx:new')
@@ -1179,7 +1179,7 @@ More user content after markers.
 
       // Should detect both tools
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Tools detected from legacy artifacts')
+        expect.stringContaining('从旧版 artifact 检测到以下工具')
       );
 
       // Both tools should have skills created
@@ -1225,13 +1225,13 @@ More user content after markers.
         call.map(arg => String(arg)).join(' ')
       );
       const hasDetectedMessage = calls.some(call =>
-        call.includes('Tools detected from legacy artifacts')
+        call.includes('从旧版 artifact 检测到以下工具')
       );
       expect(hasDetectedMessage).toBe(false);
 
       // Should update existing skills (not "Getting started" for newly configured)
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Updated: Claude Code')
+        expect.stringContaining('已更新：Claude Code')
       );
 
       consoleSpy.mockRestore();
@@ -1267,7 +1267,7 @@ More user content after markers.
 
       // Should detect Cursor as a legacy tool to upgrade (but not Claude)
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Tools detected from legacy artifacts')
+        expect.stringContaining('从旧版 artifact 检测到以下工具')
       );
 
       // Cursor skills should be created
@@ -1276,7 +1276,7 @@ More user content after markers.
 
       // Should show "Getting started" for newly configured Cursor
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Getting started')
+        expect.stringContaining('快速上手')
       );
 
       consoleSpy.mockRestore();
@@ -1446,7 +1446,7 @@ More user content after markers.
         call.map(arg => String(arg)).join(' ')
       );
       expect(calls.some(call =>
-        call.includes('The core profile now includes sync')
+        call.includes('核心 profile 现已包含 sync')
       )).toBe(true);
       expect(calls.some(call =>
         call.includes('openspec config profile core') && call.includes('openspec update')
@@ -1587,12 +1587,12 @@ content
 
       await updateCommand.execute(testDir);
 
-      // Should not short-circuit with "No configured tools found"
+      // Should not short-circuit with "未发现已配置的工具"
       const calls = consoleSpy.mock.calls.map(call =>
         call.map(arg => String(arg)).join(' ')
       );
       const hasNoConfiguredMessage = calls.some(call =>
-        call.includes('No configured tools found')
+        call.includes('未发现已配置的工具')
       );
       expect(hasNoConfiguredMessage).toBe(false);
 
@@ -1639,7 +1639,7 @@ content
         call.map(arg => String(arg)).join(' ')
       );
       const hasDeselectedRemovalNote = calls.some(call =>
-        call.includes('deselected workflows')
+        call.includes('未选中的 workflows')
       );
       expect(hasDeselectedRemovalNote).toBe(true);
 
@@ -1666,7 +1666,7 @@ content
         call.map(arg => String(arg)).join(' ')
       );
       const hasNewToolMessage = calls.some(call =>
-        call.includes("Detected new tool: Cursor. Run 'openspec init' to add it.")
+        call.includes("检测到新的工具：Cursor。运行 'openspec init' 添加。")
       );
       expect(hasNewToolMessage).toBe(true);
 
@@ -1693,17 +1693,18 @@ content
       );
 
       const consolidatedCalls = calls.filter(call =>
-        call.includes('Detected new tools:')
+        call.includes('检测到新的工具：')
       );
       expect(consolidatedCalls).toHaveLength(1);
       expect(consolidatedCalls[0]).toContain('GitHub Copilot');
       expect(consolidatedCalls[0]).toContain('Windsurf');
-      expect(consolidatedCalls[0]).toContain("Run 'openspec init' to add them.");
+      expect(consolidatedCalls[0]).toContain("运行 'openspec init' 添加。");
 
-      const repeatedSingularCalls = calls.filter(call =>
-        call.includes('Detected new tool:')
+      // 中文单复数同形，确认不会对每个工具输出重复消息（应合并为一条）
+      const repeatedCalls = calls.filter(call =>
+        call.includes('检测到新的工具：')
       );
-      expect(repeatedSingularCalls).toHaveLength(0);
+      expect(repeatedCalls).toHaveLength(1);
 
       consoleSpy.mockRestore();
     });
@@ -1722,7 +1723,7 @@ content
         call.map(arg => String(arg)).join(' ')
       );
       const hasNewToolMessage = calls.some(call =>
-        call.includes('Detected new tool')
+        call.includes('检测到新的工具')
       );
       expect(hasNewToolMessage).toBe(false);
 
@@ -1800,7 +1801,7 @@ content
         call.map(arg => String(arg)).join(' ')
       );
       const hasToolsList = calls.some(call =>
-        call.includes('Tools:') && call.includes('Claude Code')
+        call.includes('工具：') && call.includes('Claude Code')
       );
       expect(hasToolsList).toBe(true);
 
