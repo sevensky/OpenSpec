@@ -170,9 +170,9 @@ describe('repo-local change initiative links', () => {
 
     expect(result.exitCode).toBe(0);
     const output = result.stdout + result.stderr;
-    expect(output).toContain("Created change 'add-billing-ui'");
-    expect(output).toContain('Schema: spec-driven');
-    expect(output).toContain('Initiative: platform/billing-launch');
+    expect(output).toContain("已创建变更 'add-billing-ui'");
+    expect(output).toContain('架构：spec-driven');
+    expect(output).toContain('计划：platform/billing-launch');
     expect(output).not.toContain('Next:');
   });
 
@@ -456,7 +456,7 @@ describe('repo-local change initiative links', () => {
       env,
     });
     expect(humanStatus.exitCode).toBe(0);
-    expect(humanStatus.stdout).toContain('Initiative: scratch-context/scratch-launch');
+    expect(humanStatus.stdout).toContain('计划：scratch-context/scratch-launch');
 
     const instructions = await runCLI(
       ['instructions', 'proposal', '--change', 'recover-linked-change'],

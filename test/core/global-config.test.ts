@@ -191,7 +191,7 @@ describe('global-config', () => {
       getGlobalConfig();
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Invalid JSON')
+        expect.stringContaining('JSON 无效')
       );
     });
 

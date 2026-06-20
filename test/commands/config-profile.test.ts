@@ -49,7 +49,7 @@ describe('diffProfileState workflow formatting', () => {
     );
 
     expect(diff.hasChanges).toBe(true);
-    expect(diff.lines).toEqual(['workflows: removed sync']);
+    expect(diff.lines).toEqual(['工作流: 移除 sync']);
   });
 
   it('uses explicit labels when workflows are added and removed', async () => {
@@ -61,7 +61,7 @@ describe('diffProfileState workflow formatting', () => {
     );
 
     expect(diff.hasChanges).toBe(true);
-    expect(diff.lines).toEqual(['workflows: added verify; removed sync']);
+    expect(diff.lines).toEqual(['工作流: 新增 verify; 移除 sync']);
   });
 });
 
@@ -232,19 +232,19 @@ describe('config profile interactive flow', () => {
     await runConfigCommand(['profile']);
 
     const firstCall = select.mock.calls[0][0];
-    expect(firstCall.message).toBe('What do you want to configure?');
+    expect(firstCall.message).toBe('您想配置什么？');
     expect(firstCall.choices).toEqual(expect.arrayContaining([
       expect.objectContaining({
         value: 'delivery',
-        description: 'Change where workflows are installed',
+        description: '更改工作流的安装位置',
       }),
       expect.objectContaining({
         value: 'workflows',
-        description: 'Change which workflow actions are available',
+        description: '更改可用的工作流操作',
       }),
       expect.objectContaining({
         value: 'keep',
-        name: 'Keep current settings (exit)',
+        name: '保留当前设置（退出）',
       }),
     ]));
   });
@@ -290,7 +290,7 @@ describe('config profile interactive flow', () => {
     expect(select).toHaveBeenCalledTimes(2);
     const secondCall = select.mock.calls[1][0];
     expect(secondCall.choices).toEqual(expect.arrayContaining([
-      expect.objectContaining({ value: 'commands', name: 'Commands only [current]' }),
+      expect.objectContaining({ value: 'commands', name: '仅命令 [当前]' }),
     ]));
   });
 
@@ -305,17 +305,17 @@ describe('config profile interactive flow', () => {
     await runConfigCommand(['profile']);
 
     const checkboxCall = checkbox.mock.calls[0][0];
-    expect(checkboxCall.message).toBe('Select workflows to make available:');
+    expect(checkboxCall.message).toBe('选择要启用的工作流：');
     expect(checkboxCall.choices).toEqual(expect.arrayContaining([
       expect.objectContaining({
         value: 'propose',
-        name: 'Propose change',
-        description: 'Create proposal, design, and tasks from a request',
+        name: '提出变更',
+        description: '根据需求创建提案、设计和任务',
       }),
       expect.objectContaining({
         value: 'verify',
-        name: 'Verify change',
-        description: 'Run verification checks against a change',
+        name: '验证变更',
+        description: '对变更运行验证检查',
       }),
     ]));
   });
@@ -337,7 +337,7 @@ describe('config profile interactive flow', () => {
     const afterContent = fs.readFileSync(configPath, 'utf-8');
     expect(afterContent).toBe(beforeContent);
     expect(confirm).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith('No config changes.');
+    expect(consoleLogSpy).toHaveBeenCalledWith('配置未更改。');
   });
 
   it('keep action should warn when project files drift from global config', async () => {
@@ -350,8 +350,8 @@ describe('config profile interactive flow', () => {
 
     await runConfigCommand(['profile']);
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('No config changes.');
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Warning: Global config is not applied to this project.'));
+    expect(consoleLogSpy).toHaveBeenCalledWith('配置未更改。');
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('警告：全局配置尚未应用到该项目。请运行 `openspec update` 同步。'));
   });
 
   it('keep action should not warn when project files are already synced', async () => {
@@ -365,7 +365,7 @@ describe('config profile interactive flow', () => {
     await runConfigCommand(['profile']);
 
     const allLogs = consoleLogSpy.mock.calls.map((args) => args.map(String).join(' '));
-    expect(allLogs.some((line) => line.includes('Warning: Global config is not applied to this project.'))).toBe(false);
+    expect(allLogs.some((line) => line.includes('警告：全局配置尚未应用到该项目。请运行 `openspec update` 同步。'))).toBe(false);
   });
 
   it('effective no-op after prompts should warn when project files drift', async () => {
@@ -379,9 +379,9 @@ describe('config profile interactive flow', () => {
 
     await runConfigCommand(['profile']);
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('No config changes.');
+    expect(consoleLogSpy).toHaveBeenCalledWith('配置未更改。');
     expect(confirm).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Warning: Global config is not applied to this project.'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('警告：全局配置尚未应用到该项目。请运行 `openspec update` 同步。'));
   });
 
   it('keep action should warn when project has extra workflows beyond global config', async () => {
@@ -395,8 +395,8 @@ describe('config profile interactive flow', () => {
 
     await runConfigCommand(['profile']);
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('No config changes.');
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Warning: Global config is not applied to this project.'));
+    expect(consoleLogSpy).toHaveBeenCalledWith('配置未更改。');
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('警告：全局配置尚未应用到该项目。请运行 `openspec update` 同步。'));
   });
 
   it('changed config should save and ask apply when inside project', async () => {
@@ -414,7 +414,7 @@ describe('config profile interactive flow', () => {
 
     expect(getGlobalConfig().delivery).toBe('skills');
     expect(confirm).toHaveBeenCalledWith({
-      message: 'Apply changes to this project now?',
+      message: '立即将变更应用到当前项目？',
       default: true,
     });
   });
@@ -434,11 +434,11 @@ describe('config profile interactive flow', () => {
 
     expect(getGlobalConfig().delivery).toBe('skills');
     expect(confirm).toHaveBeenCalledWith({
-      message: 'Apply changes to this workspace now?',
+      message: '立即将变更应用到当前工作区？',
       default: true,
     });
     expect(execSync).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith('Config updated. Run `openspec workspace update` to apply it to workspace-local skills.');
+    expect(consoleLogSpy).toHaveBeenCalledWith('配置已更新。运行 `openspec workspace update` 将其应用到工作区本地技能。');
   });
 
   it('confirmed workspace apply should run workspace update instead of repo-local update', async () => {
@@ -475,8 +475,8 @@ describe('config profile interactive flow', () => {
     await runConfigCommand(['profile']);
 
     expect(confirm).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith('No config changes.');
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Workspace-local agent skills are out of sync'));
+    expect(consoleLogSpy).toHaveBeenCalledWith('配置未更改。');
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('工作区本地 Agent 技能与当前全局配置文件不同步'));
     expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('openspec workspace update'));
   });
 
@@ -512,7 +512,7 @@ describe('config profile interactive flow', () => {
     expect(select).not.toHaveBeenCalled();
     expect(checkbox).not.toHaveBeenCalled();
     expect(confirm).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith('Config updated. Run `openspec workspace update` to apply it to workspace-local skills.');
+    expect(consoleLogSpy).toHaveBeenCalledWith('配置已更新。运行 `openspec workspace update` 将其应用到工作区本地技能。');
   });
 
   it('Ctrl+C should cancel without stack trace and set interrupted exit code', async () => {
@@ -524,7 +524,7 @@ describe('config profile interactive flow', () => {
 
     await expect(runConfigCommand(['profile'])).resolves.toBeUndefined();
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Config profile cancelled.');
+    expect(consoleLogSpy).toHaveBeenCalledWith('已取消配置文件设置。');
     expect(process.exitCode).toBe(130);
     expect(checkbox).not.toHaveBeenCalled();
     expect(confirm).not.toHaveBeenCalled();

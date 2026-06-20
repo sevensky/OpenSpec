@@ -503,7 +503,7 @@ describe('workspace command', () => {
     });
 
     expect(update.exitCode).toBe(0);
-    expect(update.stdout).toContain('No configured tools found');
+    expect(update.stdout).toContain('未发现已配置的工具。');
     expect(`${update.stdout}\n${update.stderr}`).not.toContain('Run `openspec workspace update`');
     expect(update.stdout).not.toContain('Workspace update complete');
     expect(fs.readFileSync(getWorkspaceViewStatePath(workspaceRoot), 'utf-8')).toBe(workspaceStateBefore);
@@ -548,7 +548,7 @@ describe('workspace command', () => {
     expect(update.exitCode).toBe(0);
     expect(update.stdout).not.toContain('Workspace update complete');
     expect(update.stderr).not.toContain('Invalid workspace state');
-    expect(update.stdout).toContain('No configured tools found');
+    expect(update.stdout).toContain('未发现已配置的工具。');
     expect(fs.readFileSync(getWorkspaceViewStatePath(existingWorkspaceRoot), 'utf-8')).toBe(
       existingWorkspaceStateBefore
     );
@@ -1060,7 +1060,7 @@ ${WORKSPACE_GUIDANCE_END_MARKER}
 
     const noWorkspaces = await runCLI(['workspace', 'list'], { cwd: tempDir, env });
     expect(noWorkspaces.exitCode).toBe(0);
-    expect(noWorkspaces.stdout).toContain("No OpenSpec workspaces found. Run 'openspec workspace setup' first.");
+    expect(noWorkspaces.stdout).toContain("未找到 OpenSpec 工作区。请先运行 'openspec workspace setup'。");
 
     const missing = await runCLI(['workspace', 'setup', '--no-interactive', '--json'], {
       cwd: tempDir,
@@ -1518,8 +1518,8 @@ links:
     });
 
     expect(editorOpen.exitCode).toBe(0);
-    expect(editorOpen.stdout).toContain('Opening workspace: platform');
-    expect(editorOpen.stdout).toContain('Opener: VS Code editor');
+    expect(editorOpen.stdout).toContain('正在打开工作区：platform');
+    expect(editorOpen.stdout).toContain('打开方式：VS Code editor');
     expect(editorOpen.stdout).toContain('web ->');
     const workspaceFolders = JSON.parse(
       fs.readFileSync(getWorkspaceCodeWorkspacePath(setup.workspace.root, 'platform'), 'utf-8')
@@ -1688,23 +1688,23 @@ preferred_opener:
       { cwd: tempDir, env }
     );
     expect(setup.exitCode).toBe(0);
-    expect(setup.stdout).toContain('Workspace setup complete');
-    expect(setup.stdout).toContain('OpenSpec workspaces (1)');
-    expect(setup.stdout).toContain('Location:');
+    expect(setup.stdout).toContain('工作区设置完成');
+    expect(setup.stdout).toContain('OpenSpec 工作区（1）');
+    expect(setup.stdout).toContain('位置：');
     expect(setup.stdout).not.toContain('Root:');
-    expect(setup.stdout).toContain('Linked repos or folders (1):');
+    expect(setup.stdout).toContain('已链接的仓库或文件夹（1）：');
     expect(setup.stdout).toContain(`api -> ${expectedApi}`);
-    expect(setup.stdout).toContain('Workspace check:');
-    expect(setup.stdout).toContain('No workspace issues found.');
-    expect(setup.stdout).toContain('Next useful commands:');
+    expect(setup.stdout).toContain('工作区检查：');
+    expect(setup.stdout).toContain('未发现工作区问题。');
+    expect(setup.stdout).toContain('后续常用命令：');
 
     const list = await runCLI(['workspace', 'list'], { cwd: tempDir, env });
     expect(list.exitCode).toBe(0);
-    expect(list.stdout).toContain('OpenSpec workspaces (1)');
+    expect(list.stdout).toContain('OpenSpec 工作区（1）');
     expect(list.stdout).toContain('platform');
-    expect(list.stdout).toContain('Location:');
+    expect(list.stdout).toContain('位置：');
     expect(list.stdout).not.toContain('Root:');
-    expect(list.stdout).toContain('Linked repos or folders (1):');
+    expect(list.stdout).toContain('已链接的仓库或文件夹（1）：');
     expect(list.stdout).toContain(`api -> ${expectedApi}`);
 
     const doctor = await runCLI(['workspace', 'doctor', '--workspace', 'platform'], {
@@ -1712,11 +1712,11 @@ preferred_opener:
       env,
     });
     expect(doctor.exitCode).toBe(0);
-    expect(doctor.stdout).toContain('Workspace: platform');
-    expect(doctor.stdout).toContain('Location:');
+    expect(doctor.stdout).toContain('工作区：platform');
+    expect(doctor.stdout).toContain('位置：');
     expect(doctor.stdout).not.toContain('Root:');
-    expect(doctor.stdout).toContain('Linked repos or folders:');
-    expect(doctor.stdout).toContain('No workspace issues found.');
+    expect(doctor.stdout).toContain('已链接的仓库或文件夹：');
+    expect(doctor.stdout).toContain('未发现工作区问题。');
   });
 
   it('does not expose workspace create as a public command', async () => {

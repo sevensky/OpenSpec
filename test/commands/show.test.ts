@@ -41,8 +41,8 @@ describe('top-level show command', () => {
       expect(err).toBeDefined();
       expect(err.status).not.toBe(0);
       const stderr = err.stderr.toString();
-      expect(stderr).toContain('Nothing to show.');
-      expect(stderr).toContain('openspec show <item>');
+      expect(stderr).toContain('没有可显示的内容。');
+      expect(stderr).toContain('openspec show <项目>');
       expect(stderr).toContain('openspec change show');
       expect(stderr).toContain('openspec spec show');
     } finally {
@@ -94,7 +94,7 @@ describe('top-level show command', () => {
       expect(err).toBeDefined();
       expect(err.status).not.toBe(0);
       const stderr = err.stderr.toString();
-      expect(stderr).toContain('Ambiguous item');
+      expect(stderr).toContain('存在歧义');
       expect(stderr).toContain('--type change|spec');
     } finally {
       process.chdir(originalCwd);
@@ -112,8 +112,8 @@ describe('top-level show command', () => {
       expect(err).toBeDefined();
       expect(err.status).not.toBe(0);
       const stderr = err.stderr.toString();
-      expect(stderr).toContain("Unknown item 'unknown-item'");
-      expect(stderr).toContain('Did you mean:');
+      expect(stderr).toContain("未知项目 'unknown-item'");
+      expect(stderr).toContain('你是否想找:');
     } finally {
       process.chdir(originalCwd);
     }
