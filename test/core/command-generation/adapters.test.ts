@@ -23,7 +23,9 @@ import { piAdapter } from '../../../src/core/command-generation/adapters/pi.js';
 import { qoderAdapter } from '../../../src/core/command-generation/adapters/qoder.js';
 import { qwenAdapter } from '../../../src/core/command-generation/adapters/qwen.js';
 import { roocodeAdapter } from '../../../src/core/command-generation/adapters/roocode.js';
+import { traeAdapter } from '../../../src/core/command-generation/adapters/trae.js';
 import { windsurfAdapter } from '../../../src/core/command-generation/adapters/windsurf.js';
+import { zcodeAdapter } from '../../../src/core/command-generation/adapters/zcode.js';
 import type { CommandContent } from '../../../src/core/command-generation/types.js';
 
 describe('command-generation/adapters', () => {
@@ -340,6 +342,62 @@ describe('command-generation/adapters', () => {
       expect(output).toContain('argument-hint: "[command arguments]"');
       expect(output).toContain('---\n\n');
       expect(output).toContain('This is the command body.');
+    });
+  });
+
+  describe('traeAdapter', () => {
+    it('should have correct toolId', () => {
+      expect(traeAdapter.toolId).toBe('trae');
+    });
+
+    it('should generate correct file path with nested opsx folder', () => {
+      const filePath = traeAdapter.getFilePath('explore');
+      expect(filePath).toBe(path.join('.trae', 'commands', 'opsx', 'explore.md'));
+    });
+
+    it('should generate correct file path for different command IDs', () => {
+      expect(traeAdapter.getFilePath('propose')).toBe(path.join('.trae', 'commands', 'opsx', 'propose.md'));
+      expect(traeAdapter.getFilePath('apply')).toBe(path.join('.trae', 'commands', 'opsx', 'apply.md'));
+      expect(traeAdapter.getFilePath('archive')).toBe(path.join('.trae', 'commands', 'opsx', 'archive.md'));
+    });
+
+    it('should format file with name and description', () => {
+      const output = traeAdapter.formatFile(sampleContent);
+      expect(output).toContain('---\n');
+      expect(output).toContain('name: OpenSpec Explore');
+      expect(output).toContain('description: "Enter explore mode for thinking"');
+      expect(output).toContain('---\n\n');
+      expect(output).toContain('This is the command body.');
+    });
+
+    it('should not include argument-hint (Trae does not support it)', () => {
+      const output = traeAdapter.formatFile(sampleContent);
+      expect(output).not.toContain('argument-hint');
+    });
+  });
+
+  describe('zcodeAdapter', () => {
+    it('should have correct toolId', () => {
+      expect(zcodeAdapter.toolId).toBe('zcode');
+    });
+
+    it('should generate correct file path with opsx- prefix', () => {
+      const filePath = zcodeAdapter.getFilePath('explore');
+      expect(filePath).toBe(path.join('.zcode', 'commands', 'opsx-explore.md'));
+    });
+
+    it('should generate correct file path for different command IDs', () => {
+      expect(zcodeAdapter.getFilePath('new')).toBe(path.join('.zcode', 'commands', 'opsx-new.md'));
+      expect(zcodeAdapter.getFilePath('bulk-archive')).toBe(path.join('.zcode', 'commands', 'opsx-bulk-archive.md'));
+    });
+
+    it('should format file with description and argument-hint', () => {
+      const output = zcodeAdapter.formatFile(sampleContent);
+      expect(output).toContain('---\n');
+      expect(output).toContain('description: Enter explore mode for thinking');
+      expect(output).toContain('argument-hint: command arguments');
+      expect(output).toContain('---\n\n');
+      expect(output).toContain('This is the command body.\n\nWith multiple lines.');
     });
   });
 
@@ -698,7 +756,7 @@ describe('command-generation/adapters', () => {
         codexAdapter, codebuddyAdapter, continueAdapter, costrictAdapter,
         crushAdapter, factoryAdapter, geminiAdapter, githubCopilotAdapter,
         iflowAdapter, kilocodeAdapter, opencodeAdapter, piAdapter, qoderAdapter,
-        qwenAdapter, roocodeAdapter
+        qwenAdapter, roocodeAdapter, traeAdapter, zcodeAdapter
       ];
       for (const adapter of adapters) {
         const filePath = adapter.getFilePath('test');

@@ -47,7 +47,8 @@ export const AI_TOOLS: AIToolOption[] = [
   { name: 'Qoder', value: 'qoder', available: true, successLabel: 'Qoder', skillsDir: '.qoder' },
   { name: 'Qwen Code', value: 'qwen', available: true, successLabel: 'Qwen Code', skillsDir: '.qwen' },
   { name: 'RooCode', value: 'roocode', available: true, successLabel: 'RooCode', skillsDir: '.roo' },
-  { name: 'Trae', value: 'trae', available: true, successLabel: 'Trae', skillsDir: '.trae' },
+  { name: 'Trae', value: 'trae', available: true, successLabel: 'Trae', skillsDir: '.trae', detectionPaths: ['.trae/commands', '.trae/skills'] },
   { name: 'Windsurf', value: 'windsurf', available: true, successLabel: 'Windsurf', skillsDir: '.windsurf' },
+  { name: 'ZCode', value: 'zcode', available: true, successLabel: 'ZCode', skillsDir: '.zcode', detectionPaths: ['.zcode/commands', '.zcode/skills'] },
   { name: 'AGENTS.md (works with Amp, VS Code, …)', value: 'agents', available: false, successLabel: 'your AGENTS.md-compatible assistant' }
 ];
