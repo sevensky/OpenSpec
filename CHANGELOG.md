@@ -1,5 +1,14 @@
 # @fission-ai/openspec
 
+## 1.4.2
+
+### Patch Changes
+
+- ### New Features
+
+  - **Trae command adapter** — `openspec init` now generates Trae slash commands at `.trae/commands/opsx/<id>.md` (previously Trae was skills-only)
+  - **ZCode command adapter** — `openspec init` now supports ZCode CLI, generating commands at `.zcode/commands/opsx-<id>.md` alongside skills
+
 ## 1.4.1
 
 ### Patch Changes
