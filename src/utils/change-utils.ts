@@ -41,23 +41,30 @@ export interface ValidationResult {
 /**
  * Validates that a change name follows kebab-case conventions.
  *
- * Valid names:
- * - Start with a lowercase letter
+ * Valid names (two accepted forms):
+ * - Classic kebab-case: starts with a lowercase letter
+ *   (e.g., `add-auth`, `refactor-db`)
+ * - MMDD-prefixed kebab-case: starts with a 4-digit date (MMDD) followed by `-`
+ *   and a kebab-case suffix (e.g., `0628-add-auth`)
+ *
+ * Both forms:
  * - Contain only lowercase letters, numbers, and hyphens
- * - Do not start or end with a hyphen
+ * - Do not start or end with a hyphen (the MMDD prefix's hyphen is part of the prefix)
  * - Do not contain consecutive hyphens
  *
  * @param name - The change name to validate
  * @returns Validation result with `valid: true` or `valid: false` with an error message
  *
  * @example
- * validateChangeName('add-auth') // { valid: true }
- * validateChangeName('Add-Auth') // { valid: false, error: '...' }
+ * validateChangeName('add-auth')        // { valid: true }
+ * validateChangeName('0628-add-auth')   // { valid: true }
+ * validateChangeName('Add-Auth')        // { valid: false, error: '...' }
  */
 export function validateChangeName(name: string): ValidationResult {
-  // Pattern: starts with lowercase letter, followed by lowercase letters/numbers,
-  // optionally followed by hyphen + lowercase letters/numbers (repeatable)
-  const kebabCasePattern = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
+  // Pattern: two accepted forms.
+  //   Form 1 (classic): ^[a-z][a-z0-9]*(-[a-z0-9]+)*$
+  //   Form 2 (MMDD-prefixed): ^\d{4}-[a-z][a-z0-9]*(-[a-z0-9]+)*$
+  const kebabCasePattern = /^(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*|\d{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$/;
 
   if (!name) {
     return { valid: false, error: 'Change name cannot be empty' };
@@ -86,11 +93,15 @@ export function validateChangeName(name: string): ValidationResult {
     if (/[^a-z0-9-]/.test(name)) {
       return { valid: false, error: 'Change name can only contain lowercase letters, numbers, and hyphens' };
     }
-    if (/^[0-9]/.test(name)) {
-      return { valid: false, error: 'Change name must start with a letter' };
+    // Numeric-prefixed name that didn't match Form 2: diagnose the date prefix shape
+    if (/^\d/.test(name)) {
+      if (!/^\d{4}-[a-z]/.test(name)) {
+        return { valid: false, error: 'Numeric-prefixed change name must use MMDD-<kebab> form (e.g., 0628-add-auth)' };
+      }
+      return { valid: false, error: 'Change name with MMDD prefix must be followed by kebab-case (e.g., 0628-add-auth)' };
     }
 
-    return { valid: false, error: 'Change name must follow kebab-case convention (e.g., add-auth, refactor-db)' };
+    return { valid: false, error: 'Change name must follow kebab-case convention (e.g., add-auth, 0628-add-auth)' };
   }
 
   return { valid: true };

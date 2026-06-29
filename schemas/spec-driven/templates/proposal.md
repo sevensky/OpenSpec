@@ -1,3 +1,8 @@
+<!-- 
+命名约定：change 目录名用 MMDD-<kebab> 前缀（如 0628-add-auth），便于按日期排序与追溯。
+校验已支持两种形式：经典 kebab（add-auth）与 MMDD- 前缀（0628-add-auth），优先用后者。 
+-->
+
 ## Why
 
 <!-- 说明此变更的动机。解决什么问题？为什么现在做？ -->
@@ -9,13 +14,17 @@
 ## Capabilities
 
 ### New Capabilities
-<!-- 引入的新能力。将 <name> 替换为 kebab-case 标识符（例如 user-auth、data-export、api-rate-limiting）。每个将创建 specs/<name>/spec.md -->
+<!-- 
+引入的新能力。将 <name> 替换为 kebab-case 标识符（例如 user-auth、data-export、api-rate-limiting）。每个将创建 specs/<name>/spec.md 
+-->
 - `<name>`: <此能力覆盖范围的简要描述>
 
 ### Modified Capabilities
-<!-- 需求发生变化的既有能力（不涉及实现细节）。
-     仅当 spec 级别行为变化时列出。每个需要 delta spec 文件。
-     使用 openspec/specs/ 中的既有 spec 名称。如无需求变更则留空。 -->
+<!-- 
+需求发生变化的既有能力（不涉及实现细节）。
+仅当 spec 级别行为变化时列出。每个需要 delta spec 文件。
+使用 openspec/specs/ 中的既有 spec 名称。如无需求变更则留空。 
+-->
 - `<existing-name>`: <哪些需求正在变化>
 
 ## Impact
